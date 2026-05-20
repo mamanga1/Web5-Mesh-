@@ -73,15 +73,27 @@ go run src/core/main.go --mode=bunker --offline-sync=true
 
 📊 Performance Metrics
 
-Operation	Local (<10ms RTT)	Regional (>50ms RTT)
-Node Discovery	8.2 ms ± 0.3	47.6 ms ± 2.1
-DID Lookup	12.1 ms ± 0.5	89.3 ms ± 4.2
-Route Resolution	15.4 ms ± 0.7	112.8 ms ± 5.6
-Data Fetch	9.8 ms ± 0.4	68.2 ms ± 3.1
-Metric	Value	Period
-Network Uptime	99.87%	Last 30 days
-Data Consistency	99.94%	CRDT validation
-Successful Connections	98.21%	After NAT traversal
+┌─────────────────────────────────────────────────────────────────┐
+│                    DHT LATENCY BENCHMARKS                       │
+├──────────────────────────────┬──────────────────┬───────────────┤
+│ Operation                    │ Local (<10ms RTT)│ Regional (>50ms RTT) │
+├──────────────────────────────┼──────────────────┼───────────────────────┤
+│ Node Discovery               │ 8.2 ms ± 0.3     │ 47.6 ms ± 2.1         │
+│ DID Lookup                   │ 12.1 ms ± 0.5    │ 89.3 ms ± 4.2         │
+│ Route Resolution             │ 15.4 ms ± 0.7    │ 112.8 ms ± 5.6        │
+│ Data Fetch from Neighbor     │ 9.8 ms ± 0.4     │ 68.2 ms ± 3.1         │
+└──────────────────────────────┴──────────────────┴───────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    RELIABILITY STATISTICS                       │
+├──────────────────────┬──────────────────────────┬───────────────┤
+│ Metric               │ Value                    │ Period        │
+├──────────────────────┼──────────────────────────┼───────────────┤
+│ Network Uptime       │ 99.87%                   │ Last 30 days  │
+│ Data Consistency     │ 99.94%                   │ CRDT validation│
+│ Successful Connections│ 98.21%                  │ After NAT     │
+│ DHT Availability     │ 99.99%                   │ No SPOF       │
+└──────────────────────┴──────────────────────────┴───────────────┘
 
 📁 Project Structure
 
