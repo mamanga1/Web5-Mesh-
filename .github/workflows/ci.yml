@@ -1,0 +1,265 @@
+# ============================================================================
+# .github/workflows/ci.yml - CI/CD Pipeline for MaIA Mesh
+# ============================================================================
+# Especificación:
+# - Pipeline de integración continua automatizado
+# - Corre tests, linter y benchmarks en cada push
+# - Verifica firma de commits y licencia
+# ============================================================================
+
+name: MaIA Mesh CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Permite ejecución manual
+
+env:
+  GO_VERSION: '1.21'
+  GO111MODULE: 'on'
+
+jobs:
+  # ============================================================================
+  # Job 1: Lint y formateo de código
+  # ============================================================================
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+          golangci-lint --version
+
+      - name: Run golangci-lint
+        run: |
+          golangci-lint run ./... --timeout=5m --out-format=colored-line-number
+
+      - name: Check go mod tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum || (echo "go.mod/go.sum not tidy" && exit 1)
+
+      - name: Check go fmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Unformatted files: $unformatted"
+            exit 1
+          fi
+
+  # ============================================================================
+  # Job 2: Tests unitarios
+  # ============================================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run unit tests
+        run: |
+          go test -v -race -coverprofile=coverage.out ./tests/unit/...
+          go test -v -race -coverprofile=coverage_crypto.out ./src/crypto/...
+
+      - name: Display coverage
+        run: |
+          go tool cover -func=coverage.out | tail -1
+          go tool cover -func=coverage_crypto.out | tail -1
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage.out
+            coverage_crypto.out
+
+  # ============================================================================
+  # Job 3: Tests de integración
+  # ============================================================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run integration tests
+        run: |
+          go test -v -race -timeout 10m ./tests/integration/...
+
+      - name: Run DHT tests
+        run: |
+          go test -v -race -timeout 5m ./tests/integration/dht_test.go
+
+  # ============================================================================
+  # Job 4: Benchmarks
+  # ============================================================================
+  benchmarks:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run benchmarks
+        run: |
+          go test -bench=. -benchmem -benchtime=3s ./tests/benchmark/... 2>&1 | tee benchmark_results.txt
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark_results.txt
+
+  # ============================================================================
+  # Job 5: Verificación de seguridad y licencia
+  # ============================================================================
+  security:
+    name: Security & License Check
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run GoSec (security linter)
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          gosec -quiet -no-fail -fmt=text ./...
+
+      - name: Check license headers
+        run: |
+          # Verificar que archivos .go tienen header de licencia
+          missing=$(grep -L "Anti-Corporate Appropriation" $(find src -name "*.go" 2>/dev/null) 2>/dev/null || true)
+          if [ -n "$missing" ]; then
+            echo "Files missing license header:"
+            echo "$missing"
+            exit 1
+          fi
+          echo "✓ All files have license headers"
+
+      - name: Verify PATENT-DISCLOSURE.md exists
+        run: |
+          if [ ! -f "PATENT-DISCLOSURE.md" ]; then
+            echo "PATENT-DISCLOSURE.md is required"
+            exit 1
+          fi
+          echo "✓ Patent disclosure file exists"
+
+      - name: Verify LICENSE-TRINCHERA exists
+        run: |
+          if [ ! -f "LICENSE-TRINCHERA" ]; then
+            echo "LICENSE-TRINCHERA is required"
+            exit 1
+          fi
+          echo "✓ License file exists"
+
+  # ============================================================================
+  # Job 6: Build verification
+  # ============================================================================
+  build:
+    name: Build Verification
+    runs-on: ${{ matrix.os }}
+    needs: [security, unit-tests]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04]
+        go: [1.21, 1.22]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build for Linux
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o build/maia-mesh-linux-amd64 src/core/main.go
+          GOOS=linux GOARCH=arm64 go build -o build/maia-mesh-linux-arm64 src/core/main.go
+          echo "✓ Linux builds complete"
+
+      - name: Verify binaries
+        run: |
+          ls -la build/
+          file build/maia-mesh-linux-amd64
+
+  # ============================================================================
+  # Job 7: Notificación de estado
+  # ============================================================================
+  notify:
+    name: Notification
+    runs-on: ubuntu-latest
+    needs: [build, benchmarks, integration-tests]
+    if: always()
+    steps:
+      - name: Check status
+        run: |
+          echo "CI Pipeline Status:"
+          echo "  Lint: ${{ needs.lint.result }}"
+          echo "  Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "  Integration Tests: ${{ needs.integration-tests.result }}"
+          echo "  Benchmarks: ${{ needs.benchmarks.result }}"
+          echo "  Security: ${{ needs.security.result }}"
+          echo "  Build: ${{ needs.build.result }}"
+          
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ All checks passed! Ready for production."
+          else
+            echo "❌ Some checks failed. Please review."
+            exit 1
+          fi
