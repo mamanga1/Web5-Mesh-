@@ -75,4 +75,3 @@ Archive.org Backup: https://web.archive.org/web/*/github.com/mamanga1/web5-mesh
 **Signed by Project Lead:**
 Mamanga
 DID: did:maia:mamanga1-project-key
-GPG: [Fingerprint will be added upon first signed commit]
