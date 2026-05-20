@@ -125,10 +125,9 @@ Protocol Spec: docs/architecture/protocol-spec.md
 
 
 
-                                                     Build the internet where nodes own the routing.
-
-                                                           Made with ❤️ in Corrientes, Argentina
-                                                            Protocol Version: 2.0.0-production
-                                                      DID of Project Lead: did:maia:mamanga1-project-key
+  Build the internet where nodes own the routing.
+     Made with ❤️ in Corrientes, Argentina
+      Protocol Version: 2.0.0-production
+DID of Project Lead: did:maia:mamanga1-project-key
 
 
