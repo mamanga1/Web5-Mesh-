@@ -118,7 +118,7 @@ El resto de la población migrará al enjambre cuando la red centralizada empiec
 
 📡 **Contacto y Código**
 
-- Canal de Telegram: `t.me/IberaMeshCore`
+- Canal de Telegram: `t.me/IberaAON`
 - Código Fuente: [github.com/mamanga1/Web5-Mesh](https://github.com/mamanga1/Web5-Mesh)
 
 <div align="center">
