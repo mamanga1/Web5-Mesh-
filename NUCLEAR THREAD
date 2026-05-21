@@ -1,0 +1,91 @@
+# 🔱 THE NUCLEAR THREAD / EL HILO NUCLEAR
+
+---
+
+## 1 / 8
+
+**EN:** From a bunker in Corrientes, Argentina, powered by bitter mate and recycled hardware, we are building the overlay network that survives when centralized internet fails or is censored. Meet **IAON — Iberá Autonomous Overlay Network (Web5-Mesh)**. Not another app. Sovereign infrastructure running on bare metal.
+
+**ES:** Desde un búnker en Corrientes, Argentina, a puro mate amargo y hardware reciclado, construimos la red que sobrevive cuando la internet centralizada se cae o te censura. Se llama **IAON — Iberá Autonomous Overlay Network (Web5-Mesh)**. No es otra app. Es infraestructura soberana corriendo sobre el metal.
+
+---
+
+## 2 / 8
+
+**EN:** It doesn't live in AWS or fancy data centers. It runs on cheap Allwinner TV Boxes (headless MiniArch), old phones (Poco F1, Samsung A-series), and a local Xeon as persistent anchor. **Software owns the hardware. Nodes own the routing.**
+
+**ES:** No vive en AWS ni en data centers bonitos. Corre en TV Boxes Allwinner baratas (MiniArch headless), celulares viejos (Poco F1, Samsung) y un Xeon en el búnker como ancla persistente. **El software es dueño del hardware. Los nodos son dueños del ruteo.**
+
+---
+
+## 3 / 8
+
+**EN:** Real tech stack:
+
+• `secp256k1 DIDs` → Sovereign identity (no Google, no Apple)
+• `Kademlia DHT (XOR) over UDP` → Decentralized routing
+• `CRDTs + BadgerDB` → Offline-first state with atomic merges
+• `Noise Framework (ChaCha20-Poly1305)` → Encrypted tunnels with real NAT traversal
+• `Dynamic PoW + reputation` → Adaptive anti-Sybil
+
+**ES:** Stack técnico real:
+
+• `DIDs secp256k1` → Identidad soberana (sin Google ni Apple)
+• `Kademlia DHT (XOR) sobre UDP` → Ruteo descentralizado
+• `CRDTs + BadgerDB` → Estado offline-first con merges atómicos
+• `Noise Framework (ChaCha20-Poly1305)` → Túneles cifrados con NAT traversal real
+• `PoW dinámico + reputación` → Anti-Sybil adaptativo
+
+---
+
+## 4 / 8
+
+**EN:** The secret isn't marketing decentralization. It's **asymmetry + physical resilience**. A node loses signal in the field? It keeps signing and accumulating local state. Touches the mesh again? Atomic CRDT merge. Xeon goes down? Regional islands keep living. **We don't measure uptime. We measure survival.**
+
+**ES:** El secreto no es la "descentralización de marketing". Es **asimetría + resiliencia física**. ¿Un nodo pierde señal en el monte? Sigue firmando y acumulando estado local. Vuelve a rozar la malla? Merge CRDT atómico. ¿Cae la Xeon? Las islas regionales siguen vivas. **No medimos uptime. Medimos supervivencia.**
+
+---
+
+## 5 / 8
+
+**EN:** This isn't Web3 with extra steps. It's **trench Web5**: identity, routing and state completely decoupled from corporate infrastructure. An overlay that runs underneath the commercial internet and keeps working when the upper layer fails or blocks you.
+
+**ES:** Esto no es Web3 con más pasos. Es **Web5 de trinchera**: identidad, ruteo y estado completamente desacoplados de la infraestructura corporativa. Una overlay que corre por debajo de la internet comercial y sigue funcionando cuando la de arriba se rompe o te bloquea.
+
+---
+
+## 6 / 8
+
+**EN:** **TRINCHERA License included** — anti-corporate by design. We don't want vulture capital packaging this to resell your data or routing metadata. Building real sovereignty? Welcome. Here to monetize users? Keep walking.
+
+**ES:** **Licencia TRINCHERA incluida** — anti-corporate por diseño. No queremos capital buitre empaquetando esto para revenderte tus propios datos o metadatos de ruteo. ¿Venís a construir soberanía real? Bienvenido. ¿Venís a monetizar al usuario? Seguí de largo.
+
+---
+
+## 7 / 8
+
+**EN:** The future is not one monolithic global DHT. It's **strong regional bubbles federated by high-reputation nodes**. Latam, Africa, censored or weak-infrastructure zones: here is an alternative that doesn't depend on Starlink or controlled subsea cables.
+
+**ES:** El futuro no es una DHT global monolítica. Son **burbujas regionales fuertes federadas por nodos de alta reputación**. Latam, África, zonas de censura o infraestructura débil: acá hay una salida que no depende de Starlink ni de cables submarinos controlados.
+
+---
+
+## 8 / 8
+
+**EN:** We don't ask for funding. We don't ask for permission. We just show the metal: **open source, running today, built from the Argentine NEA with hardware anyone can get.** The 21st century will be defined by who controls the infrastructure. **We choose sovereignty.**
+
+**ES:** No pedimos inversión. No pedimos permiso. Solo mostramos el metal: **código abierto, corriendo hoy, hecho desde el NEA argentino con chatarra que cualquiera puede conseguir.** El siglo XXI se define por quién controla la infraestructura. **Nosotros elegimos soberanía.**
+
+---
+
+## 🔗 REPOSITORIO
+
+**https://github.com/mamanga1/Web5-Mesh**
+
+---
+
+<div align="center">
+
+*Hecho con orgullo y aguante desde Corrientes, Argentina.*
+
+</div>
