@@ -1,15 +1,6 @@
 // ============================================================================
 // src/config/config.go - Node Configuration & Flags Parser
 // ============================================================================
-// Especificación:
-// - Flags de línea de comandos para configuración del nodo
-// - Modos de operación: full, relay, bunker
-// - Configuración de puertos UDP y límites de memoria
-// ============================================================================
-
-// ============================================================================
-// src/config/config.go - Node Configuration & Flags Parser
-// ============================================================================
 
 package config
 
@@ -93,29 +84,29 @@ type BootstrapConfig struct {
 }
 
 type NodeConfig struct {
-	NodeID      string
-	NodeName    string
-	Mode        NodeMode
-	Hardware    HardwareProfile
+	NodeID       string
+	NodeName     string
+	Mode         NodeMode
+	Hardware     HardwareProfile
 	HardwareAuto bool
-	Network     NetworkConfig
-	Storage     StorageConfig
-	Crypto      CryptoConfig
-	Performance PerformanceConfig
-	Bootstrap   BootstrapConfig
-	LogLevel    string
-	Verbose     bool
-	ConfigFile  string
+	Network      NetworkConfig
+	Storage      StorageConfig
+	Crypto       CryptoConfig
+	Performance  PerformanceConfig
+	Bootstrap    BootstrapConfig
+	LogLevel     string
+	Verbose      bool
+	ConfigFile   string
 }
 
 func DefaultConfig() *NodeConfig {
 	cfg := &NodeConfig{
-		NodeName:    "MaIA-Mesh-Node",
-		Mode:        ModeFull,
-		Hardware:    HardwareUnknown,
+		NodeName:     "MaIA-Mesh-Node",
+		Mode:         ModeFull,
+		Hardware:     HardwareUnknown,
 		HardwareAuto: true,
-		LogLevel:    "info",
-		Verbose:     false,
+		LogLevel:     "info",
+		Verbose:      false,
 	}
 	cfg.Network.UDPPort = 4242
 	cfg.Network.TCPPort = 4243
