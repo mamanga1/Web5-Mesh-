@@ -155,7 +155,7 @@ Offer patent cross-licensing
 - **Correo del Búnker:** IberaAON@proton.me
   Buzón seguro y encriptado de punta a punta para coordinar nodos semilla o avisar de fallas críticas fuera del radar.
 
-- **La Trinchera en Telegram:** @IberaMeshCore
+- **La Trinchera en Telegram:** @IberaAON
   El canal oficial para ver el estado de la red en tiempo real, alertas del enjambre y novedades de la infraestructura.
 
 - **Plano Técnico:** docs/architecture/protocol-spec.md
