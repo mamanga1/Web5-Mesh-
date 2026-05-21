@@ -54,10 +54,13 @@ and nodes own the routing.**
 ## 🚀 Quick Start - Deploy Your Sovereign Node
 
 ### Prerequisites
-- Go 1.21+
-- Linux/Unix/macOS
-- 4GB+ RAM (8GB+ recommended)
-- Stable internet connection
+
+* **Go Compiler:** 1.21+
+* **Operating Systems:** Linux / Unix / macOS / Windows / Android (Termux)
+* **Hardware Requirements:**
+  * **Edge Nodes (Mobile/TV Boxes):** Min 1GB RAM (Optimized for low-resource environments).
+  * **Staging Nodes (Stable Core Relays):** 4GB+ RAM (8GB+ recommended for persistent multi-threaded routing).
+* **Network:** Intermittent or stable connection (Integrated NAT Traversal handles symmetric firewalls and CGNAT seamlessly).
 
 ### One-Line Installation
 
