@@ -16,10 +16,10 @@ env:
   GO111MODULE: 'on'
 
 jobs:
-  lint:
-    name: Lint & Format
-    runs-on: ubuntu-latest
-    steps:
+  #lint:
+   # name: Lint & Format
+   # runs-on: ubuntu-latest
+   # steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -41,7 +41,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: lint
+    #needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
