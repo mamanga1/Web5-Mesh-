@@ -1,5 +1,22 @@
 # web5-mesh / iAP2P - MaIA Mesh
 
+🛰️ **IBERÁ AON (Autonomous Overlay Network)**
+
+El protocolo iAP2P y la infraestructura MaIA Mesh nacidos en el barro del NEA.
+
+Esto no es la internet de Silicon Valley pagada con billeteras de fondos de inversión. 
+Esto es una red de guerrilla digital donde se terminaron los servidores reyes y los 
+clientes mendigos. Acá somos todos clientes y servidores al mismo tiempo, y las reglas 
+del juego cambiaron: en esta malla va a lucir el más capaz por su eficiencia sobre el 
+metal, no el que más brille por su marketing.
+
+El código está optimizado afilado para correr en el metal de una Xeon pesada o en el 
+chip de un TV Box reciclado con un hilo de conexión. Si te bancás el ruteo, si minás 
+el puzzle para validar tu identidad y mantenés el almacenamiento firme, sos parte del 
+enjambre.
+
+---
+
 ## The Sovereign Web5 Protocol - End-to-End Decentralized Infrastructure
 
 <div align="center">
@@ -130,10 +147,27 @@ Open-source their implementation within 30 days
 Contribute ≥10% of net revenue to maintenance fund
 Offer patent cross-licensing
 
-📞 Community & Support
+## 📞 Comunidad y Soporte Directo
 
-GitHub Issues: github.com/mamanga1/web5-mesh/issues
-Protocol Spec: docs/architecture/protocol-spec.md
+- **Reportes y Código:** github.com/mamanga1/web5-mesh/issues
+  Para revisar los hilos, meter mejoras o reportar si saltó algún tapón en los logs.
+
+- **Correo del Búnker:** IberaAON@proton.me
+  Buzón seguro y encriptado de punta a punta para coordinar nodos semilla o avisar de fallas críticas fuera del radar.
+
+- **La Trinchera en Telegram:** @IberaMeshCore
+  El canal oficial para ver el estado de la red en tiempo real, alertas del enjambre y novedades de la infraestructura.
+
+- **Plano Técnico:** docs/architecture/protocol-spec.md
+  La especificación del protocolo para los que quieran mirar la matemática y los fierros por dentro.
+
+---
+
+**La internet donde los nodos son dueños de sus propias rutas.**
+Hecho con orgullo y aguante desde Corrientes, Argentina.
+Protocol Version: 2.0.0-production
+DID of Project Lead: did:maia:mamanga1-project-ke
+
 
 
 
