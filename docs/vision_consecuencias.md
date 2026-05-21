@@ -8,7 +8,7 @@ keywords: [p2p, mesh-network, web5, kademlia, crdt, dht, noise-protocol]
 
 # 👁️ Visión y Consecuencias Reales de Web5-Mesh (IAON)
 
-> Análisis de arquitectura asimétrica sintetizado por Qwen 3.5 + Grok xAI + Ingeniería de Trinchera desde el NEA.
+> Análisis de arquitectura asimétrica sintetizado por Qwen 3.5 + Grok xAI + Geminis 1.5 & 3.1 Ingeniería de Trinchera desde el NEA.
 
 ---
 
