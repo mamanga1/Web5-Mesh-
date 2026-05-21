@@ -1,0 +1,80 @@
+Entendé IAON (Web5-Mesh) como si fuera una panadería de barrio
+
+Imaginá que querés armar un sistema para que la panadería de tu barrio le venda a los vecinos usando computadoras.
+La informática tradicional (Silicon Valley) te dice que necesitás tres cosas: Cloudflare, Nginx y Nebula.
+
+Acá te explico cómo Web5-Mesh (IAON) agarra ese Frankenstein, mejora a uno y extermina a los otros dos.
+
+1. 💀 CLOUDFLARE → Desaparece por completo
+2. 
+🔍 ¿Qué hace en el mundo normal?
+Es el portero del edificio. Todo el que quiere entrar a tu página web tiene que pasar primero por los servidores de Cloudflare. Ellos revisan quién sos, te dan el permiso (el candadito SSL) y te dejan pasar.
+
+⚠️ ¿Por qué es un peligro?
+Si Cloudflare se cae, tu panadería se funde.
+
+Si Cloudflare decide que no le gusta tu cara, te borra y tu negocio desaparece de internet.
+
+Dependés de un dueño central.
+
+✅ ¿Por qué DESAPARECE en la Web5-Mesh?
+Porque la identidad en nuestra red no la da una empresa: la da la matemática. Usamos identidad soberana (secp256k1). Cuando levantás tu nodo en una TV Box vieja, la máquina genera una clave criptográfica que es imposible de falsificar o confiscar.
+Tu identidad es tu firma. No necesitás que ningún portero de Silicon Valley te diga quién sos ni te cuide la puerta. El candadito de seguridad ya viene de fábrica metido en el silicio de tu nodo.
+
+2. 💀 NGINX → Desaparece por completo
+   
+🔍 ¿Qué hace en el mundo normal?
+Es el mozo del restaurante. Vos (el cliente) te sentás, le pedís la carta a Nginx, Nginx va hasta la cocina (el servidor central donde está la base de datos), busca la comida y te la trae.
+
+⚠️ ¿Por qué es un peligro?
+Si la cocina se queda sin luz o se corta el cable que une las mesas con la cocina, el mozo se queda quieto y te tira un cartel de error (502 Bad Gateway).
+
+No hay comida para nadie.
+
+✅ ¿Por qué DESAPARECE en la Web5-Mesh?
+Porque en nuestra red no hay cocina central. Cada nodo es la cocina y el mozo al mismo tiempo. Usamos CRDTs + BadgerDB. El catálogo de productos (o el libro de órdenes) no está en un servidor gigante en EE. UU.; se replica y vive adentro del almacenamiento local de tu teléfono viejo o tu TV Box.
+
+Si internet se corta por completo en el barrio, el cliente le pide los datos al nodo del vecino.
+
+La red sigue vendiendo, firmando y anotando de forma local.
+
+Cuando el cable se vuelve a conectar, las bases de datos de todos los nodos se dan la mano y se actualizan solas (merge atómico) sin que nadie pise a nadie.
+
+3. 🚀 NEBULA → No desaparece, lo MEJORAMOS
+   
+🔍 ¿Qué hace en el mundo normal?
+Nebula (creado por Slack) es un caño invisible (VPN P2P) que conecta computadoras en cualquier parte del mundo para que se hablen directo, saltándose los bloqueos de los routers comunes. La tecnología es excelente.
+
+⚠️ ¿Dónde se rompe Nebula?
+Es "ciego". Para que la computadora A encuentre a la computadora B, Nebula necesita sí o sí un Lighthouse (Faro). El Faro es un servidor con una dirección IP fija y pública que está siempre encendido en la nube de Amazon (AWS).
+
+Si el Faro de Amazon se apaga o el gobierno lo bloquea, las computadoras A y B ya no saben cómo encontrarse y el caño se destruye.
+
+✅ ¿Cómo MEJORAMOS a Nebula?
+Le cortamos la dependencia con Amazon. En lugar de un Faro central, le metimos una DHT Kademlia (XOR). Ahora el sistema de localización funciona como el boca en boca de un pueblo:
+
+Cada TV Box o teléfono que se conecta a la red se convierte en un pedacito del Faro.
+
+Si querés buscar el nodo de la panadería, le preguntás a los nodos vecinos más cercanos matemáticamente, y ellos te van guiando hasta que lo encontrás.
+
+No hay un punto único que se pueda apagar.
+
+Si el servidor Xeon principal del búnker se cae, las islas de nodos regionales siguen vivas y encontrándose entre sí.
+
+📌 En resumen (para que le quede claro a cualquiera)
+
+La informática vieja te obliga a alquilarle la infraestructura a los sospechosos de siempre:
+
+
+[Tu Tienda] → Alquiler en AWS (Nebula) → Configurar Nginx → Pasar por Cloudflare → [Cliente]
+
+La Web5-Mesh (IAON) limpia la mesa, saca a los intermediarios y mete todo adentro de un solo binario en Go que corre en cualquier fierro viejo:
+
+
+[Tu Nodo / TV Box] <═══════ Túnel Cifrado Noise (UDP) ═══════> [Nodo Cliente / Móvil]
+ (Identidad Matemática)         (Ruteo por Kademlia)          (Estado local en CRDT)
+
+🧉 El cierre
+
+No es que inventamos la pólvora. Es que agarramos la criptografía más pesada que usan las corporaciones para proteger sus secretos, la unificamos en una sola pieza de software de guerrilla y se la devolvimos a los fierros de la gente.
+Por eso no necesitás a Cloudflare, no necesitás a Nginx, y por eso Nebula ahora camina sin muletas.
