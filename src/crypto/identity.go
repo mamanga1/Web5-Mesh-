@@ -1,15 +1,6 @@
 // ============================================================================
 // src/crypto/identity.go - Secp256k1 Identity + Base58 DIDs
 // ============================================================================
-// Especificación:
-// - Reemplazar curvas elípticas estándar por secp256k1
-// - DID did:maia: + Base58( SHA-256(public_key) ) = 32 bytes
-// - Métodos Sign() y Verify() para firmas ECDSA
-// ============================================================================
-
-// ============================================================================
-// src/crypto/identity.go - Secp256k1 Identity + Base58 DIDs
-// ============================================================================
 
 package crypto
 
@@ -29,12 +20,10 @@ type DID struct {
 	Hash   []byte
 }
 
-// String retorna la representación string del DID
 func (d *DID) String() string {
 	return d.Method + ":" + base58.Encode(d.Hash)
 }
 
-// Identity estructura con material criptográfico completo
 type Identity struct {
 	DID            *DID
 	PrivateKey     *secp256k1.PrivateKey
@@ -46,24 +35,19 @@ type Identity struct {
 	SignatureCurve string
 }
 
-// NewIdentity genera una nueva identidad criptográfica con secp256k1
 func NewIdentity(name string) (*Identity, error) {
 	privKey, err := secp256k1.GeneratePrivateKey()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate private key: %w", err)
 	}
-
 	pubKey := privKey.PubKey()
 	pubKeyCompressed := pubKey.SerializeCompressed()
 	hash := sha256.Sum256(pubKeyCompressed)
-
 	did := &DID{
 		Method: "did:maia",
 		Hash:   hash[:],
 	}
-
 	now := time.Now()
-
 	return &Identity{
 		DID:            did,
 		PrivateKey:     privKey,
@@ -76,7 +60,6 @@ func NewIdentity(name string) (*Identity, error) {
 	}, nil
 }
 
-// Sign firma datos usando la clave privada ECDSA
 func (id *Identity) Sign(data []byte) ([]byte, error) {
 	if id.PrivateKey == nil {
 		return nil, fmt.Errorf("no private key available")
@@ -89,7 +72,6 @@ func (id *Identity) Sign(data []byte) ([]byte, error) {
 	return signature.Serialize(), nil
 }
 
-// Verify verifica una firma usando la clave pública
 func (id *Identity) Verify(data []byte, signature []byte) bool {
 	if id.PublicKey == nil {
 		return false
@@ -108,39 +90,10 @@ func (id *Identity) Verify(data []byte, signature []byte) bool {
 	return sig.Verify(hash[:], id.PublicKey)
 }
 
-// GetDIDString retorna el DID como string legible
 func (id *Identity) GetDIDString() string {
 	return id.DID.String()
 }
 
-// GetPublicKeyHex retorna la clave pública en formato hexadecimal
 func (id *Identity) GetPublicKeyHex() string {
 	return hex.EncodeToString(id.PublicKey.SerializeCompressed())
-}
-
-// LoadIdentityFromHex carga una identidad desde clave privada hexadecimal
-func LoadIdentityFromHex(privateKeyHex string, name string) (*Identity, error) {
-	privKeyBytes, err := hex.DecodeString(privateKeyHex)
-	if err != nil {
-		return nil, fmt.Errorf("invalid hex: %w", err)
-	}
-	privKey := secp256k1.PrivKeyFromBytes(privKeyBytes)
-	pubKey := privKey.PubKey()
-	pubKeyCompressed := pubKey.SerializeCompressed()
-	hash := sha256.Sum256(pubKeyCompressed)
-	did := &DID{
-		Method: "did:maia",
-		Hash:   hash[:],
-	}
-	now := time.Now()
-	return &Identity{
-		DID:            did,
-		PrivateKey:     privKey,
-		PublicKey:      pubKey,
-		Name:           name,
-		CreatedAt:      now,
-		LastSeen:       now,
-		Reputation:     100,
-		SignatureCurve: "secp256k1",
-	}, nil
 }
