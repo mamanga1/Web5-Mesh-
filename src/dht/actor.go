@@ -7,40 +7,34 @@
 // - Mensajes con canales para comunicación segura entre goroutines
 // ============================================================================
 
+// ============================================================================
+// src/dht/actor.go - Actor Model for DHT Concurrency (Lock-Free)
+// ============================================================================
+
 package dht
 
 import (
-	"context"
 	"fmt"
 	"sync"
 	"time"
 )
 
-// MsgType define los tipos de mensajes que puede procesar el actor
 type MsgType int
 
 const (
-	// Operaciones de lectura
 	MsgFindClosest MsgType = iota
 	MsgGetNode
 	MsgTotalNodes
 	MsgGetBucketStats
-
-	// Operaciones de escritura
 	MsgAddNode
 	MsgRemoveNode
 	MsgUpdateNode
-
-	// Operaciones de mantenimiento
 	MsgPingNode
 	MsgRefreshBuckets
 	MsgShutdown
-
-	// Respuestas
 	MsgResponse
 )
 
-// String retorna representación string del tipo de mensaje
 func (m MsgType) String() string {
 	switch m {
 	case MsgFindClosest:
@@ -70,7 +64,6 @@ func (m MsgType) String() string {
 	}
 }
 
-// Request representa una solicitud al actor DHT
 type Request struct {
 	Type    MsgType
 	Data    interface{}
@@ -78,53 +71,44 @@ type Request struct {
 	Timeout time.Duration
 }
 
-// Response representa una respuesta del actor DHT
 type Response struct {
 	Type  MsgType
 	Data  interface{}
 	Error error
 }
 
-// FindClosestRequest datos para solicitud FindClosest
 type FindClosestRequest struct {
 	Target NodeID
 	K      int
 }
 
-// FindClosestResponse datos de respuesta FindClosest
 type FindClosestResponse struct {
 	Nodes []*NodeEntry
 }
 
-// GetNodeRequest datos para solicitud GetNode
 type GetNodeRequest struct {
 	ID NodeID
 }
 
-// GetNodeResponse datos de respuesta GetNode
 type GetNodeResponse struct {
 	Node  *NodeEntry
 	Found bool
 }
 
-// AddNodeRequest datos para solicitud AddNode
 type AddNodeRequest struct {
 	Node *NodeEntry
 }
 
-// RemoveNodeRequest datos para solicitud RemoveNode
 type RemoveNodeRequest struct {
 	ID NodeID
 }
 
-// UpdateNodeRequest datos para solicitud UpdateNode
 type UpdateNodeRequest struct {
 	ID         NodeID
 	Address    string
 	Reputation uint64
 }
 
-// DHTActor es el actor principal del DHT
 type DHTActor struct {
 	routingTable *RoutingTable
 	requestCh    chan *Request
@@ -134,31 +118,26 @@ type DHTActor struct {
 	mu           sync.RWMutex
 }
 
-// NewDHTActor crea un nuevo actor DHT
 func NewDHTActor(localID NodeID) *DHTActor {
 	return &DHTActor{
 		routingTable: NewRoutingTable(localID),
-		requestCh:    make(chan *Request, 1000), // Buffer de 1000 solicitudes
+		requestCh:    make(chan *Request, 1000),
 		stopCh:       make(chan struct{}),
 		started:      false,
 	}
 }
 
-// Start inicia el actor (debe llamarse una sola vez)
 func (a *DHTActor) Start() {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-
 	if a.started {
 		return
 	}
-
 	a.started = true
 	a.wg.Add(1)
 	go a.run()
 }
 
-// Stop detiene el actor
 func (a *DHTActor) Stop() {
 	a.mu.Lock()
 	if !a.started {
@@ -167,30 +146,22 @@ func (a *DHTActor) Stop() {
 	}
 	a.started = false
 	a.mu.Unlock()
-
 	close(a.stopCh)
 	a.wg.Wait()
 }
 
-// Send envía una solicitud al actor y espera la respuesta
 func (a *DHTActor) Send(req *Request) (*Response, error) {
 	if req == nil {
 		return nil, fmt.Errorf("request cannot be nil")
 	}
-
-	// Establecer timeout por defecto si no está configurado
 	if req.Timeout == 0 {
 		req.Timeout = 30 * time.Second
 	}
-
-	// Crear canal de respuesta si no existe
 	if req.RespCh == nil {
 		req.RespCh = make(chan Response, 1)
 	}
-
 	select {
 	case a.requestCh <- req:
-		// Esperar respuesta o timeout
 		select {
 		case resp := <-req.RespCh:
 			return &resp, nil
@@ -202,31 +173,24 @@ func (a *DHTActor) Send(req *Request) (*Response, error) {
 	}
 }
 
-// run es el bucle principal del actor (procesa mensajes secuencialmente)
 func (a *DHTActor) run() {
 	defer a.wg.Done()
-
 	for {
 		select {
 		case <-a.stopCh:
 			return
-
 		case req := <-a.requestCh:
 			resp := a.processRequest(req)
-
-			// Enviar respuesta (no bloqueante)
 			if req.RespCh != nil {
 				select {
 				case req.RespCh <- *resp:
 				default:
-					// Canal lleno o cerrado, ignorar
 				}
 			}
 		}
 	}
 }
 
-// processRequest procesa una solicitud de forma secuencial (sin locks)
 func (a *DHTActor) processRequest(req *Request) *Response {
 	var resp Response
 	resp.Type = req.Type
@@ -291,7 +255,6 @@ func (a *DHTActor) processRequest(req *Request) *Response {
 				node.Reputation = data.Reputation
 			}
 			node.LastSeen = time.Now()
-			// Reagregar para actualizar LRU
 			a.routingTable.AddNode(node)
 			resp.Data = true
 		} else {
@@ -299,7 +262,6 @@ func (a *DHTActor) processRequest(req *Request) *Response {
 		}
 
 	case MsgPingNode:
-		// Verificar liveness de un nodo (implementación simplificada)
 		data, ok := req.Data.(GetNodeRequest)
 		if !ok {
 			resp.Error = fmt.Errorf("invalid data type for PingNode")
@@ -310,7 +272,6 @@ func (a *DHTActor) processRequest(req *Request) *Response {
 			node.LastSeen = time.Now()
 			resp.Data = true
 		} else {
-			// Nodo muerto, remover
 			if exists {
 				a.routingTable.RemoveNode(data.ID)
 			}
@@ -318,8 +279,6 @@ func (a *DHTActor) processRequest(req *Request) *Response {
 		}
 
 	case MsgRefreshBuckets:
-		// Refrescar buckets (proactivo)
-		// En producción, aquí se hace ping a nodos al azar
 		resp.Data = true
 
 	case MsgShutdown:
@@ -328,13 +287,9 @@ func (a *DHTActor) processRequest(req *Request) *Response {
 	default:
 		resp.Error = fmt.Errorf("unknown message type: %v", req.Type)
 	}
-
 	return &resp
 }
 
-// Métodos de conveniencia para enviar solicitudes (bloqueantes)
-
-// FindClosest encuentra los k nodos más cercanos a un target
 func (a *DHTActor) FindClosest(target NodeID, k int) ([]*NodeEntry, error) {
 	resp, err := a.Send(&Request{
 		Type: MsgFindClosest,
@@ -353,7 +308,6 @@ func (a *DHTActor) FindClosest(target NodeID, k int) ([]*NodeEntry, error) {
 	return result.Nodes, nil
 }
 
-// GetNode obtiene un nodo por su ID
 func (a *DHTActor) GetNode(id NodeID) (*NodeEntry, bool, error) {
 	resp, err := a.Send(&Request{
 		Type: MsgGetNode,
@@ -372,7 +326,6 @@ func (a *DHTActor) GetNode(id NodeID) (*NodeEntry, bool, error) {
 	return result.Node, result.Found, nil
 }
 
-// TotalNodes retorna la cantidad total de nodos en la tabla
 func (a *DHTActor) TotalNodes() (int, error) {
 	resp, err := a.Send(&Request{Type: MsgTotalNodes})
 	if err != nil {
@@ -388,7 +341,6 @@ func (a *DHTActor) TotalNodes() (int, error) {
 	return total, nil
 }
 
-// AddNode agrega un nodo a la tabla de enrutamiento
 func (a *DHTActor) AddNode(node *NodeEntry) error {
 	resp, err := a.Send(&Request{
 		Type: MsgAddNode,
@@ -403,7 +355,6 @@ func (a *DHTActor) AddNode(node *NodeEntry) error {
 	return nil
 }
 
-// RemoveNode elimina un nodo de la tabla de enrutamiento
 func (a *DHTActor) RemoveNode(id NodeID) (bool, error) {
 	resp, err := a.Send(&Request{
 		Type: MsgRemoveNode,
@@ -422,7 +373,6 @@ func (a *DHTActor) RemoveNode(id NodeID) (bool, error) {
 	return removed, nil
 }
 
-// UpdateNode actualiza la información de un nodo
 func (a *DHTActor) UpdateNode(id NodeID, address string, reputation uint64) (bool, error) {
 	resp, err := a.Send(&Request{
 		Type: MsgUpdateNode,
@@ -445,7 +395,6 @@ func (a *DHTActor) UpdateNode(id NodeID, address string, reputation uint64) (boo
 	return updated, nil
 }
 
-// PingNode verifica si un nodo está vivo
 func (a *DHTActor) PingNode(id NodeID) (bool, error) {
 	resp, err := a.Send(&Request{
 		Type: MsgPingNode,
@@ -464,7 +413,6 @@ func (a *DHTActor) PingNode(id NodeID) (bool, error) {
 	return alive, nil
 }
 
-// Shutdown detiene el actor de forma ordenada
 func (a *DHTActor) Shutdown() error {
 	resp, err := a.Send(&Request{Type: MsgShutdown})
 	if err != nil {
@@ -477,13 +425,10 @@ func (a *DHTActor) Shutdown() error {
 	return nil
 }
 
-// GetRoutingTable retorna una referencia a la tabla interna (solo para depuración)
-// NOTA: Esto rompe el encapsulamiento del actor, solo usar para monitoreo
 func (a *DHTActor) GetRoutingTable() *RoutingTable {
 	return a.routingTable
 }
 
-// IsRunning retorna true si el actor está activo
 func (a *DHTActor) IsRunning() bool {
 	a.mu.RLock()
 	defer a.mu.RUnlock()
