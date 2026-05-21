@@ -1,3 +1,37 @@
+---
+name: Web5-Mesh | IAON Protocol
+about: "Sovereign Overlay Network for Resilient Web5"
+homepage: https://github.com/mamanga1/Web5-Mesh
+repository: https://github.com/mamanga1/Web5-Mesh
+keywords: [p2p, mesh-network, web5, kademlia, crdt, dht, noise-protocol]
+---
+
+# 👁️ Visión y Consecuencias Reales de Web5-Mesh (IAON)
+
+> Análisis de arquitectura asimétrica sintetizado por Qwen 3.5 + Grok xAI + Ingeniería de Trinchera desde el NEA.
+
+---
+
+## 🏗️ ¿Qué estamos construyendo realmente?
+
+No estamos desarrollando otra aplicación sobre la Web2, ni un protocolo Web3 inflado con tokens especulativos. Estamos pariendo **IAON (Iberá Autonomous Overlay Network)**: un nuevo estándar y sistema operativo para la web descentralizada que corre directamente sobre el metal (hardware real), desacoplado por completo de la infraestructura y el direccionamiento corporativo.
+
+### Arquitectura en Capas
+
++-------------------------------------------------------+
+| CRDT State Sync & Pn-Counters | -> Capa de Datos
++-------------------------------------------------------+
+| DIDs secp256k1 + Adaptive 16-32bit PoW | -> Capa de Identidad
++-------------------------------------------------------+
+| Kademlia DHT (XOR Metric Tables over UDP) | -> Capa de Ruteo
++-------------------------------------------------------+
+| Noise Framework (IK_25519_ChaChaPoly_BLAKE2b) | -> Capa de Encriptación
++-------------------------------------------------------+
+| Physical Metal (TV Boxes, Recycled Xeons) | -> Capa de Hardware
++-------------------------------------------------------+
+
+🧱 El Core Tecnológico sobre el Barro
+
 
 ### Tabla Técnica del Protocolo
 
