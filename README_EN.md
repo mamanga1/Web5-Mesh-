@@ -80,11 +80,6 @@ go run src/core/main.go --mode=relay --public-ip=true
 # Run in air-gapped bunker mode
 go run src/core/main.go --mode=bunker --offline-sync=true
 
-
----
-
-### Copiá esto como **Parte 4** (desde `## 📊 Performance Metrics` hasta antes de `## 🔐 Security & Cryptography`)
-
 ```markdown
 ## 📊 Performance Metrics
 
@@ -134,9 +129,6 @@ web5-mesh/
 
 ---
 
-### Copiá esto como **Parte 5** (desde `## 🔐 Security & Cryptography` hasta el final)
-
-```markdown
 ## 🔐 Security & Cryptography
 
 | Layer | Technology | Purpose |
