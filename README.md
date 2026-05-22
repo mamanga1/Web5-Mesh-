@@ -72,15 +72,14 @@ INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
 [INFO]  Enjambre P2P estableciendo rutas hacia nodos vecinos...
 
 Configuration Options
+
 bash
 # Run as full node with auto-discovery
 go run src/core/main.go --mode=full \
     --dht-bootstrap=did:maia:seed1,did:maia:seed2 \
     --domain=wallet.4sk.mesh
-
 # Run as relay node (higher rewards)
 go run src/core/main.go --mode=relay --public-ip=true
-
 # Run in air-gapped bunker mode
 go run src/core/main.go --mode=bunker --offline-sync=true
 
@@ -152,5 +151,3 @@ La internet donde los nodos son dueños de sus propias rutas.
 Hecho con orgullo y aguante desde Corrientes, Argentina.
 Protocol Version: 2.0.0-production
 DID of Project Lead: did:maia:mamanga1-project-key
-
-</div> ```
