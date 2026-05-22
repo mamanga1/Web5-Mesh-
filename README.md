@@ -1,4 +1,4 @@
-# web5-mesh / iAP2P - MaIA Mesh
+# Web5-Mesh / iAP2P - MaIA Mesh
 
 🛰️ **IBERÁ AON (Autonomous Overlay Network)**
 
