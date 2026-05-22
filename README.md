@@ -65,7 +65,7 @@ and nodes own the routing.**
 ### One-Line Installation
 
 ```bash
-git clone https://github.com/mamanga1/web5-mesh.git
+git clone https://github.com/mamanga1/Web5-Mesh.git
 cd web5-mesh
 go run src/core/main.go --mode=bootstrap
 
