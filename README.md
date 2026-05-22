@@ -30,20 +30,20 @@ El código está optimizado afilado para correr en el metal de una Xeon pesada o
 ---
 
 ## 🔥 What Makes web5-mesh Different?
-
 ```text
 +------------------------------+----------------------------------+
 | Traditional Internet         | web5-mesh (Web5 Native)          |
 +------------------------------+----------------------------------+
-| ❌ Single point of failure   | ✅ No intermediaries              |
-| ❌ Metadata visible to ISP   | ✅ ISP sees only encrypted UDP   |
-| ❌ Censorable by takedown     | ✅ Unstoppable network            |
-| ❌ Identity tied to IP        | ✅ Identity = Cryptographic Proof |
-| ❌ Centralized DNS            | ✅ Self-hosted .mesh domains      |
+| ❌ Single point of failure   | ✅ No intermediaries            |
+| ❌ Metadata visible to ISP   | ✅ ISP sees only encrypted UDP  |
+| ❌ Censorable by takedown    | ✅ Unstoppable network          |
+| ❌ Identity tied to IP       | ✅ Identity = Crypto. Proof     |
+| ❌ Centralized DNS           | ✅ Self-hosted .mesh domains    |
 +------------------------------+----------------------------------+
+
 🚀 Quick Start - Deploy Your Sovereign Node
 Prerequisites
-text
+
 +---------------------------+---------------------------+
 | Requirement               | Minimum Version           |
 +---------------------------+---------------------------+
@@ -54,14 +54,15 @@ text
 | Staging Nodes (Relays)    | 4GB+ RAM (8GB+ rec.)      |
 | Network                   | Intermittent or stable    |
 +---------------------------+---------------------------+
+
 One-Line Installation
+
 bash
 git clone https://github.com/mamanga1/Web5-Mesh.git
 cd web5-mesh
 go run src/core/main.go --mode=bootstrap
-Expected output:
 
-text
+Expected output:
 ===================================================================
 INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
 ===================================================================
@@ -69,6 +70,7 @@ INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
 [DID]  Tu dirección matemática soberana es: did:maia:7z39k8q2p...w9x1
 [CORE]  Levantando DHT Kademlia en puerto UDP 4242
 [INFO]  Enjambre P2P estableciendo rutas hacia nodos vecinos...
+
 Configuration Options
 bash
 # Run as full node with auto-discovery
@@ -81,8 +83,9 @@ go run src/core/main.go --mode=relay --public-ip=true
 
 # Run in air-gapped bunker mode
 go run src/core/main.go --mode=bunker --offline-sync=true
+
 📊 Performance Metrics
-text
+
 +------------------------------+-------------------+-----------------------+
 │ DHT LATENCY BENCHMARKS       │ Local (<10ms RTT) │ Regional (>50ms RTT)  │
 +------------------------------+-------------------+-----------------------+
@@ -96,12 +99,13 @@ text
 │ RELIABILITY STATISTICS       │ Value                    │ Period        │
 +------------------------------+--------------------------+---------------+
 │ Network Uptime               │ 99.87%                   │ Last 30 days  │
-│ Data Consistency             │ 99.94%                   │ CRDT validation│
+│ Data Consistency             │ 99.94%                   │ CRDT validtion│
 │ Successful Connections       │ 98.21%                   │ After NAT     │
 │ DHT Availability             │ 99.99%                   │ No SPOF       │
 +------------------------------+--------------------------+---------------+
+
 📁 Project Structure
-text
+
 web5-mesh/
 ├── .github/workflows/ci.yml      # CI pipeline
 ├── docs/                         # Full documentation
@@ -119,8 +123,9 @@ web5-mesh/
 ├── LICENSE-TRINCHERA             # MIT + anti-corporate clause
 ├── PATENT-DISCLOSURE.md          # Prior art declaration
 └── README.md
+
 🔐 Security & Cryptography
-text
+
 +---------------+----------------------------------------------+
 | Layer         | Implementation                               |
 +---------------+----------------------------------------------+
@@ -129,33 +134,23 @@ text
 | Transport     | Noise Protocol + ChaCha20-Poly1305           |
 | Signatures    | ECDSA (handshake) + Poly1305 MAC (session)   |
 +---------------+----------------------------------------------+
+
 ⚖️ License
 MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
-
 Corporations (>50 employees) using this protocol must:
-
 ✅ Open-source their implementation within 30 days
-
 ✅ Contribute ≥10% of net revenue to maintenance fund
-
 ✅ Offer patent cross-licensing
 
 📞 Community & Direct Support
 Issues & Code: github.com/mamanga1/web5-mesh/issues
-
 Secure Email: IberaAON@proton.me (PGP encrypted)
-
 Telegram: @IberaAON
-
 Technical Blueprint: docs/architecture/protocol-spec.md
 
-<div align="center">
 La internet donde los nodos son dueños de sus propias rutas.
-
 Hecho con orgullo y aguante desde Corrientes, Argentina.
-
 Protocol Version: 2.0.0-production
-
 DID of Project Lead: did:maia:mamanga1-project-key
 
 </div> ```
