@@ -169,7 +169,7 @@ Offer patent cross-licensing
 **La internet donde los nodos son dueños de sus propias rutas.**
 Hecho con orgullo y aguante desde Corrientes, Argentina.
 Protocol Version: 2.0.0-production
-DID of Project Lead: did:maia:mamanga1-project-ke
+DID of Project Lead: did:maia:mamanga1-project-key
 
 
 
