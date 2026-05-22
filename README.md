@@ -4,16 +4,9 @@
 
 El protocolo iAP2P y la infraestructura MaIA Mesh nacidos en el barro del NEA.
 
-Esto no es la internet de Silicon Valley pagada con billeteras de fondos de inversión. 
-Esto es una red de guerrilla digital donde se terminaron los servidores reyes y los 
-clientes mendigos. Acá somos todos clientes y servidores al mismo tiempo, y las reglas 
-del juego cambiaron: en esta malla va a lucir el más capaz por su eficiencia sobre el 
-metal, no el que más brille por su marketing.
+Esto no es la internet de Silicon Valley pagada con billeteras de fondos de inversión. Esto es una red de guerrilla digital donde se terminaron los servidores reyes y los clientes mendigos. Acá somos todos clientes y servidores al mismo tiempo, y las reglas del juego cambiaron: en esta malla va a lucir el más capaz por su eficiencia sobre el metal, no el que más brille por su marketing.
 
-El código está optimizado afilado para correr en el metal de una Xeon pesada o en el 
-chip de un TV Box reciclado con un hilo de conexión. Si te bancás el ruteo, si minás 
-el puzzle para validar tu identidad y mantenés el almacenamiento firme, sos parte del 
-enjambre.
+El código está optimizado afilado para correr en el metal de una Xeon pesada o en el chip de un TV Box reciclado con un hilo de conexión. Si te bancás el ruteo, si minás el puzzle para validar tu identidad y mantenés el almacenamiento firme, sos parte del enjambre.
 
 ---
 
@@ -21,14 +14,11 @@ enjambre.
 
 <div align="center">
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat&label=CI%20Status)
-![License](https://img.shields.io/badge/license-MIT+Anti--Robbery-blue?style=flat)
-![Go Version](https://img.shields.io/badge/go-1.21+-brightgreen?style=flat)
-![Crypto](https://img.shields.io/badge/crypto-secp256k1+ChaCha20-red?style=flat)
-![Storage](https://img.shields.io/badge/storage-BadgerDB-orange?style=flat)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/mamanga1/web5-mesh/ci.yml?style=flat-square&label=CI)](https://github.com/mamanga1/web5-mesh/actions)
+[![License](https://img.shields.io/badge/License-MIT%2BAnti--Corporate-blue?style=flat-square)](LICENSE-TRINCHERA)
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org/)
 
-**The first truly sovereign overlay network where software owns the hardware
-and nodes own the routing.**
+**The first truly sovereign overlay network where software owns the hardware and nodes own the routing.**
 
 [📖 Whitepaper](docs/whitepaper/web5-philosophy.md) |
 [🏗️ Architecture](docs/architecture/overview.md) |
@@ -41,35 +31,37 @@ and nodes own the routing.**
 
 ## 🔥 What Makes web5-mesh Different?
 
-| Traditional Internet (Web2/Web3) | web5-mesh (Web5 Native) |
-|----------------------------------|--------------------------|
-| ❌ Single point of failure | ✅ No intermediaries |
-| ❌ Metadata visible to ISP | ✅ ISP sees only encrypted UDP |
-| ❌ Censorable by domain takedown | ✅ Unstoppable network |
-| ❌ Identity tied to IP address | ✅ Identity = Cryptographic Proof |
-| ❌ Centralized DNS | ✅ Self-hosted .mesh domains |
-
----
-
-## 🚀 Quick Start - Deploy Your Sovereign Node
-
-### Prerequisites
-
-* **Go Compiler:** 1.21+
-* **Operating Systems:** Linux / Unix / macOS / Windows / Android (Termux)
-* **Hardware Requirements:**
-  * **Edge Nodes (Mobile/TV Boxes):** Min 1GB RAM (Optimized for low-resource environments).
-  * **Staging Nodes (Stable Core Relays):** 4GB+ RAM (8GB+ recommended for persistent multi-threaded routing).
-* **Network:** Intermittent or stable connection (Integrated NAT Traversal handles symmetric firewalls and CGNAT seamlessly).
-
-### One-Line Installation
-
-```bash
+```text
++------------------------------+----------------------------------+
+| Traditional Internet         | web5-mesh (Web5 Native)          |
++------------------------------+----------------------------------+
+| ❌ Single point of failure   | ✅ No intermediaries              |
+| ❌ Metadata visible to ISP   | ✅ ISP sees only encrypted UDP   |
+| ❌ Censorable by takedown     | ✅ Unstoppable network            |
+| ❌ Identity tied to IP        | ✅ Identity = Cryptographic Proof |
+| ❌ Centralized DNS            | ✅ Self-hosted .mesh domains      |
++------------------------------+----------------------------------+
+🚀 Quick Start - Deploy Your Sovereign Node
+Prerequisites
+text
++---------------------------+---------------------------+
+| Requirement               | Minimum Version           |
++---------------------------+---------------------------+
+| Go Compiler               | 1.21+                     |
+| Operating Systems         | Linux / Unix / macOS /    |
+|                           | Windows / Android (Termux)|
+| Edge Nodes (TV Boxes)     | 1GB RAM                   |
+| Staging Nodes (Relays)    | 4GB+ RAM (8GB+ rec.)      |
+| Network                   | Intermittent or stable    |
++---------------------------+---------------------------+
+One-Line Installation
+bash
 git clone https://github.com/mamanga1/Web5-Mesh.git
 cd web5-mesh
 go run src/core/main.go --mode=bootstrap
-
 Expected output:
+
+text
 ===================================================================
 INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
 ===================================================================
@@ -77,9 +69,8 @@ INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
 [DID]  Tu dirección matemática soberana es: did:maia:7z39k8q2p...w9x1
 [CORE]  Levantando DHT Kademlia en puerto UDP 4242
 [INFO]  Enjambre P2P estableciendo rutas hacia nodos vecinos...
-
 Configuration Options
-
+bash
 # Run as full node with auto-discovery
 go run src/core/main.go --mode=full \
     --dht-bootstrap=did:maia:seed1,did:maia:seed2 \
@@ -90,33 +81,27 @@ go run src/core/main.go --mode=relay --public-ip=true
 
 # Run in air-gapped bunker mode
 go run src/core/main.go --mode=bunker --offline-sync=true
-
 📊 Performance Metrics
+text
++------------------------------+-------------------+-----------------------+
+│ DHT LATENCY BENCHMARKS       │ Local (<10ms RTT) │ Regional (>50ms RTT)  │
++------------------------------+-------------------+-----------------------+
+│ Node Discovery               │ 8.2 ms ± 0.3      │ 47.6 ms ± 2.1         │
+│ DID Lookup                   │ 12.1 ms ± 0.5     │ 89.3 ms ± 4.2         │
+│ Route Resolution             │ 15.4 ms ± 0.7     │ 112.8 ms ± 5.6        │
+│ Data Fetch from Neighbor     │ 9.8 ms ± 0.4      │ 68.2 ms ± 3.1         │
++------------------------------+-------------------+-----------------------+
 
-┌─────────────────────────────────────────────────────────────────┐
-│                    DHT LATENCY BENCHMARKS                       │
-├──────────────────────────────┬──────────────────┬───────────────┤
-│ Operation                    │ Local (<10ms RTT)│ Regional (>50ms RTT) │
-├──────────────────────────────┼──────────────────┼───────────────────────┤
-│ Node Discovery               │ 8.2 ms ± 0.3     │ 47.6 ms ± 2.1         │
-│ DID Lookup                   │ 12.1 ms ± 0.5    │ 89.3 ms ± 4.2         │
-│ Route Resolution             │ 15.4 ms ± 0.7    │ 112.8 ms ± 5.6        │
-│ Data Fetch from Neighbor     │ 9.8 ms ± 0.4     │ 68.2 ms ± 3.1         │
-└──────────────────────────────┴──────────────────┴───────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                    RELIABILITY STATISTICS                       │
-├──────────────────────┬──────────────────────────┬───────────────┤
-│ Metric               │ Value                    │ Period        │
-├──────────────────────┼──────────────────────────┼───────────────┤
-│ Network Uptime       │ 99.87%                   │ Last 30 days  │
-│ Data Consistency     │ 99.94%                   │ CRDT validation│
-│ Successful Connections│ 98.21%                  │ After NAT     │
-│ DHT Availability     │ 99.99%                   │ No SPOF       │
-└──────────────────────┴──────────────────────────┴───────────────┘
-
++------------------------------+--------------------------+---------------+
+│ RELIABILITY STATISTICS       │ Value                    │ Period        │
++------------------------------+--------------------------+---------------+
+│ Network Uptime               │ 99.87%                   │ Last 30 days  │
+│ Data Consistency             │ 99.94%                   │ CRDT validation│
+│ Successful Connections       │ 98.21%                   │ After NAT     │
+│ DHT Availability             │ 99.99%                   │ No SPOF       │
++------------------------------+--------------------------+---------------+
 📁 Project Structure
-
+text
 web5-mesh/
 ├── .github/workflows/ci.yml      # CI pipeline
 ├── docs/                         # Full documentation
@@ -134,49 +119,43 @@ web5-mesh/
 ├── LICENSE-TRINCHERA             # MIT + anti-corporate clause
 ├── PATENT-DISCLOSURE.md          # Prior art declaration
 └── README.md
-
 🔐 Security & Cryptography
-
-Identity: secp256k1 DIDs (did:maia:...)
-Anti-Sybil: Proof-of-Work (16-bit Hashcash)
-Transport: Noise Protocol + ChaCha20-Poly1305
-Signatures: ECDSA (handshake only) + Poly1305 MAC (session)
-
+text
++---------------+----------------------------------------------+
+| Layer         | Implementation                               |
++---------------+----------------------------------------------+
+| Identity      | secp256k1 DIDs (did:maia:...)                |
+| Anti-Sybil    | Proof-of-Work (16-bit Hashcash)              |
+| Transport     | Noise Protocol + ChaCha20-Poly1305           |
+| Signatures    | ECDSA (handshake) + Poly1305 MAC (session)   |
++---------------+----------------------------------------------+
 ⚖️ License
-
 MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
+
 Corporations (>50 employees) using this protocol must:
-Open-source their implementation within 30 days
-Contribute ≥10% of net revenue to maintenance fund
-Offer patent cross-licensing
 
-## 📞 Comunidad y Soporte Directo
+✅ Open-source their implementation within 30 days
 
-- **Reportes y Código:** github.com/mamanga1/web5-mesh/issues
-  Para revisar los hilos, meter mejoras o reportar si saltó algún tapón en los logs.
+✅ Contribute ≥10% of net revenue to maintenance fund
 
-- **Correo del Búnker:** IberaAON@proton.me
-  Buzón seguro y encriptado de punta a punta para coordinar nodos semilla o avisar de fallas críticas fuera del radar.
+✅ Offer patent cross-licensing
 
-- **La Trinchera en Telegram:** @IberaAON
-  El canal oficial para ver el estado de la red en tiempo real, alertas del enjambre y novedades de la infraestructura.
+📞 Community & Direct Support
+Issues & Code: github.com/mamanga1/web5-mesh/issues
 
-- **Plano Técnico:** docs/architecture/protocol-spec.md
-  La especificación del protocolo para los que quieran mirar la matemática y los fierros por dentro.
+Secure Email: IberaAON@proton.me (PGP encrypted)
 
----
+Telegram: @IberaAON
 
-**La internet donde los nodos son dueños de sus propias rutas.**
+Technical Blueprint: docs/architecture/protocol-spec.md
+
+<div align="center">
+La internet donde los nodos son dueños de sus propias rutas.
+
 Hecho con orgullo y aguante desde Corrientes, Argentina.
+
 Protocol Version: 2.0.0-production
+
 DID of Project Lead: did:maia:mamanga1-project-key
 
-
-
-
-  Build the internet where nodes own the routing.
-     Made with ❤️ in Corrientes, Argentina
-      Protocol Version: 2.0.0-production
-DID of Project Lead: did:maia:mamanga1-project-key
-
-
+</div> ```
