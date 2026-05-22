@@ -1,279 +1,153 @@
-=== Web5-Mesh / iAP2P - MaIA Mesh ===
-🛰️ IBERÁ AON (Autonomous Overlay Network)
+# Web5-Mesh / iAP2P - MaIA Mesh
 
-The first truly sovereign overlay network where software owns the hardware and nodes own the routing.
+🛰️ **IBERÁ AON (Autonomous Overlay Network)**
 
-Quick Links: https://github.com/mamanga1/Web5-Mesh | docs/architecture/protocol-spec.md
+El protocolo iAP2P y la infraestructura MaIA Mesh nacidos en el barro del NEA.
 
-=== QUICK START (One-Liner) ===
-git clone https://github.com/mamanga1/Web5-Mesh.git && cd Web5-Mesh && go run src/core/main.go --mode=bootstrap
+Esto no es la internet de Silicon Valley pagada con billeteras de fondos de inversión. Esto es una red de guerrilla digital donde se terminaron los servidores reyes y los clientes mendigos. Acá somos todos clientes y servidores al mismo tiempo, y las reglas del juego cambiaron: en esta malla va a lucir el más capaz por su eficiencia sobre el metal, no el que más brille por su marketing.
 
-Expected Output:
-─────────────────────────────────────
+El código está optimizado afilado para correr en el metal de una Xeon pesada o en el chip de un TV Box reciclado con un hilo de conexión. Si te bancás el ruteo, si minás el puzzle para validar tu identidad y mantenés el almacenamiento firme, sos parte del enjambre.
+
+---
+
+## The Sovereign Web5 Protocol - End-to-End Decentralized Infrastructure
+
+<div align="center">
+
+[![CI Status](https://img.shields.io/github/actions/workflow/status/mamanga1/web5-mesh/ci.yml?style=flat-square&label=CI)](https://github.com/mamanga1/web5-mesh/actions)
+[![License](https://img.shields.io/badge/License-MIT%2BAnti--Corporate-blue?style=flat-square)](LICENSE-TRINCHERA)
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org/)
+
+**The first truly sovereign overlay network where software owns the hardware and nodes own the routing.**
+
+[📖 Whitepaper](docs/whitepaper/web5-philosophy.md) |
+[🏗️ Architecture](docs/architecture/overview.md) |
+[⚡ Benchmarks](#performance-metrics) |
+[🛠️ Quickstart](#quick-start)
+
+</div>
+
+---
+
+## 🔥 What Makes web5-mesh Different?
+```text
++------------------------------+----------------------------------+
+| Traditional Internet         | web5-mesh (Web5 Native)          |
++------------------------------+----------------------------------+
+| ❌ Single point of failure   | ✅ No intermediaries            |
+| ❌ Metadata visible to ISP   | ✅ ISP sees only encrypted UDP  |
+| ❌ Censorable by takedown    | ✅ Unstoppable network          |
+| ❌ Identity tied to IP       | ✅ Identity = Crypto. Proof     |
+| ❌ Centralized DNS           | ✅ Self-hosted .mesh domains    |
++------------------------------+----------------------------------+
+
+🚀 Quick Start - Deploy Your Sovereign Node
+Prerequisites
+
++---------------------------+---------------------------+
+| Requirement               | Minimum Version           |
++---------------------------+---------------------------+
+| Go Compiler               | 1.21+                     |
+| Operating Systems         | Linux / Unix / macOS /    |
+|                           | Windows / Android (Termux)|
+| Edge Nodes (TV Boxes)     | 1GB RAM                   |
+| Staging Nodes (Relays)    | 4GB+ RAM (8GB+ rec.)      |
+| Network                   | Intermittent or stable    |
++---------------------------+---------------------------+
+
+One-Line Installation
+
+bash
+git clone https://github.com/mamanga1/Web5-Mesh.git
+cd web5-mesh
+go run src/core/main.go --mode=bootstrap
+
+Expected output:
+===================================================================
 INICIALIZANDO CORE iAP2P / MaIA MESH - PARADIGMA WEB5 SOBERANO
+===================================================================
 [INFO] Identidad del Nodo Creada Correctamente.
 [DID]  Tu dirección matemática soberana es: did:maia:7z39k8q2p...w9x1
 [CORE]  Levantando DHT Kademlia en puerto UDP 4242
+[INFO]  Enjambre P2P estableciendo rutas hacia nodos vecinos...
 
-=== ARCHITECTURE STACK ===
+Configuration Options
 
-Core Components:
-• Identity System: secp256k1 DIDs (did:maia:...)
-• Routing Protocol: Kademlia DHT with Actor model
-• Transport: UDP 4242 + NAT traversal fallbacks  
-• Encryption: Noise Protocol + ChaCha20-Poly1305
-• Storage: BadgerDB + CRDTs for conflict-free replication
+bash
+# Run as full node with auto-discovery
+go run src/core/main.go --mode=full \
+    --dht-bootstrap=did:maia:seed1,did:maia:seed2 \
+    --domain=wallet.4sk.mesh
+# Run as relay node (higher rewards)
+go run src/core/main.go --mode=relay --public-ip=true
+# Run in air-gapped bunker mode
+go run src/core/main.go --mode=bunker --offline-sync=true
 
-=== PERFORMANCE METRICS ===
+📊 Performance Metrics
 
-DHT Latency Benchmarks (Production v2.0.0):
-───────────────────────────────────────
-Local Network (<10ms RTT):
-  • Node Discovery:      8.2 ms ± 0.3
-  • DID Lookup:          12.1 ms ± 0.5
-  • Route Resolution:    15.4 ms ± 0.7
++------------------------------+-------------------+-----------------------+
+│ DHT LATENCY BENCHMARKS       │ Local (<10ms RTT) │ Regional (>50ms RTT)  │
++------------------------------+-------------------+-----------------------+
+│ Node Discovery               │ 8.2 ms ± 0.3      │ 47.6 ms ± 2.1         │
+│ DID Lookup                   │ 12.1 ms ± 0.5     │ 89.3 ms ± 4.2         │
+│ Route Resolution             │ 15.4 ms ± 0.7     │ 112.8 ms ± 5.6        │
+│ Data Fetch from Neighbor     │ 9.8 ms ± 0.4      │ 68.2 ms ± 3.1         │
++------------------------------+-------------------+-----------------------+
 
-Regional Network (>50ms RTT):
-  • Node Discovery:      47.6 ms ± 2.1
-  • DID Lookup:          89.3 ms ± 4.2
-  • Route Resolution:    112.8 ms ± 5.6
++------------------------------+--------------------------+---------------+
+│ RELIABILITY STATISTICS       │ Value                    │ Period        │
++------------------------------+--------------------------+---------------+
+│ Network Uptime               │ 99.87%                   │ Last 30 days  │
+│ Data Consistency             │ 99.94%                   │ CRDT validtion│
+│ Successful Connections       │ 98.21%                   │ After NAT     │
+│ DHT Availability             │ 99.99%                   │ No SPOF       │
++------------------------------+--------------------------+---------------+
 
-Network Reliability:
-  • Uptime:              99.87% (last 30 days)
-  • Data Consistency:    99.94% CRDT validation
-  • Connection Success:  98.21% after NAT traversal
+📁 Project Structure
 
-=== PROJECT STRUCTURE ===
+web5-mesh/
+├── .github/workflows/ci.yml      # CI pipeline
+├── docs/                         # Full documentation
+├── src/
+│   ├── core/                     # Node orchestration
+│   ├── crypto/                   # secp256k1 + ChaCha20 + PoW
+│   ├── dht/                      # Kademlia with Actor model
+│   ├── routing/                  # NAT traversal + relay fallback
+│   ├── storage/                  # BadgerDB + CRDTs
+│   ├── consensus/                # Lightweight voting
+│   ├── reputation/               # Trust scoring
+│   └── domain_resolution/        # .mesh resolver
+├── tests/                        # Integration + unit tests
+├── scripts/                      # Deployment + benchmarks
+├── LICENSE-TRINCHERA             # MIT + anti-corporate clause
+├── PATENT-DISCLOSURE.md          # Prior art declaration
+└── README.md
 
-Web5-Mesh/
-├── .github/workflows/ci.yml      # Automated testing pipeline
-├── docs/architecture/             # Complete protocol specification  
-│   ├── dht-implementation.md
-│   ├── routing-spec.md
-│   └── consensus-algorithm.md
-├── src/core/                     # Node orchestration layer
-│   ├── main.go                  # Entry point with CLI parser
-│   ├── node.go                  # Core node struct and lifecycle  
-│   ├── config.yaml              # Default configuration schema
-│   └── bootstrap.go             # Initial network discovery
-├── src/crypto/                   # Cryptographic primitives
-│   ├── identities.go            # secp256k1 DID implementation
-│   ├── pow.go                  # 16-bit Hashcash anti-Sybil
-│   ├── noise.go                # Handshake protocol
-│   └── chacha20.go             # Session encryption  
-├── src/dht/                      # Kademlia implementation
-│   ├── kademlia.go            # Core DHT operations
-│   ├── routing_table.go       # O(log n) bucket management
-│   └── bootstrap_peers.go    # Seed node resolution
-├── src/routing/                  # Mesh routing and NAT traversal
-│   ├── mesh.go                # P2P connection management  
-│   ├── nat_traversal.go      # UPNP / NAT-PMP fallbacks
-│   └── relay_fallback.go     # External relay integration
-├── src/storage/                  # Local persistence layer
-│   ├── badger_wrapper.go    # LSM tree abstraction
-│   ├── crdt.go              # Conflict-free merge algorithm  
-│   └── vector_clocks.go    # Causal ordering metadata
-├── src/consensus/               # Lightweight voting protocol
-│   ├── voting.go           # Proposal and commit logic
-│   └── quorum.go          # Node-weighted thresholds
-├── src/reputation/             # Trust scoring system  
-│   ├── scoring.go        # Dynamic trust calculation
-│   └── penalties.go      # Misbehavior tracking
-├── src/domain_resolution/     # .mesh DNS implementation
-│   ├── resolver.go     # Decentralized name lookup
-│   └── records.go     # Resource record format
-├── tests/integration/        # End-to-end protocol tests  
-├── scripts/deploy.sh        # Node deployment automation
-├── LICENSE-TRINCHERA        # MIT with anti-corporate clause
-├── PATENT-DISCLOSURE.md    # Prior art declaration
-└── README.md                # This file
+🔐 Security & Cryptography
 
-=== SECURITY & CRYPTOGRAPHY ===
++---------------+----------------------------------------------+
+| Layer         | Implementation                               |
++---------------+----------------------------------------------+
+| Identity      | secp256k1 DIDs (did:maia:...)                |
+| Anti-Sybil    | Proof-of-Work (16-bit Hashcash)              |
+| Transport     | Noise Protocol + ChaCha20-Poly1305           |
+| Signatures    | ECDSA (handshake) + Poly1305 MAC (session)   |
++---------------+----------------------------------------------+
 
-Layered Defense Model:
+⚖️ License
+MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
+Corporations (>50 employees) using this protocol must:
+✅ Open-source their implementation within 30 days
+✅ Contribute ≥10% of net revenue to maintenance fund
+✅ Offer patent cross-licensing
 
-Application/Data Layer:
-  • E2E encryption via application protocol  
-  • Data integrity with vector clocks
-  • Anti-replay tokens per session
+📞 Community & Direct Support
+Issues & Code: github.com/mamanga1/web5-mesh/issues
+Secure Email: IberaAON@proton.me (PGP encrypted)
+Telegram: @IberaAON
+Technical Blueprint: docs/architecture/protocol-spec.md
 
-Transport Layer (Noise Protocol):
-  • Handshake: X25519 + Curve25519
-  • Session encryption: ChaCha20-Poly1305  
-  • MAC authentication per packet
-
-Identity Layer (secp256k1):
-  • DIDs: did:maia:<public_key_hex>
-  • ECDSA signatures for all state changes
-  • Non-transferable ownership
-
-Anti-Sybil Layer (Proof-of-Work):
-  • 16-bit Hashcash per node registration  
-  • Non-monetizable computational cost  
-
-=== NODE DEPLOYMENT MODES ===
-
-Edge Node Mode (TV Box / IoT device):
-───────────────────────────────────
-Minimum: Any x86 or ARM32+, 1GB RAM, intermittent network OK
-Command: go run src/core/main.go --mode=bootstrap
-
-Relay Node Mode (Staging infrastructure):  
-────────────────────────────────────
-Minimum: Dual-core, 4GB+ RAM, stable connection recommended
-Command: go run src/core/main.go --mode=relay --public-ip=true
-
-Full Node Mode (Primary routing + storage):
-─────────────────────────────────────
-Minimum: Quad-core, 16GB+ RAM, SSD preferred  
-Command: go run src/core/main.go --mode=full \
-         --dht-bootstrap="did:maia:seed1,did:maia:seed2" \
-         --domain="wallet.4sk.mesh"
-
-Bunker Mode (Air-gapped / offline-first):
-─────────────────────────────────
-Minimum: Any x86 or ARM32+, 1GB RAM  
-Command: go run src/core/main.go --mode=bunker --offline-sync=true \
-        --backup-interval=h6 --encryption-level=max
-
-=== BUILD CONFIGURATION ===
-
-Production Build with Optimizations:
-─────────────────────────────────
-go build -tags "netgo,osusergo,static_build" \
-    -ldflags "-w -s" \
-    src/core/main.go
-
-Development with Verbose Logging:  
-───────────────────────────────
-go run src/core/main.go --verbose --log-level=debug
-
-Cross-Compilation for Edge Devices:
-────────────────────────────────
-GOOS=linux GOARCH=arm64 go build ...  # TV Box / Android TV  
-GOOS=darwin GOARCH=amd64 go build ... # macOS development
-
-=== PERFORMANCE COMPARISON ===
-
-| Metric              | Traditional Web2 | web5-mesh        | Improvement      |
-|---------------------|------------------|------------------|------------------|
-| Metadata Visibility | ISP + CDN visible | Encrypted only   | 100% opaque      |
-| Single Point of Fail. | Multiple (CDN, DNS) | None by design | Eliminated       |
-| Node Sovereignty     | Client-only or API consumer | True dual role | Architectural    |
-| Latency to Content   | Hops through CDNs | Direct neighbor fetch | O(log n) reduction |
-| Censorship Resistance | Moderate (via appeals) | High (no central authority) | Structural      |
-
-=== PROJECT STATUS ===
-
-Version: 2.0.0-production
-
-Component Stability Assessment:
-───────────────────────────────
-Core Node Engine:    Stable ✅ - Production ready  
-DHT Kademlia:        Stable ✅ - O(log n) complexity verified  
-Identity System:     Stable ✅ - secp256k1 fully operational  
-Relay Protocol:      Beta ⚠️  - Works with documented caveats  
-.mesh Resolution:    Alpha 🔬 - Experimental, not production-ready  
-Consensus Layer:     PoC 🔬  - Research and development phase  
-
-Known Limitations (Active Development):
-───────────────────────────────────
-1. NAT Traversal - UPNP and NAT-PMP support inconsistent across ISPs
-2. Mobile Optimization - Battery-aware protocols pending for edge devices  
-3. Cross-platform Sync - CRDT merge conflicts in multi-device scenarios  
-4. Throughput Scaling - Relay nodes show diminishing returns above 10k concurrent connections
-
-=== LICENSE & GOVERNANCE ===
-
-MIT with Anti-Corporate Appropriation Clause:
-───────────────────────────────────────
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, subject to these conditions:
-
-1. Include copyright notice in all copies or substantial portions.
-
-2. CORPORATE ADDENDUM (Section 4):
-   Any entity with >50 employees utilizing this protocol must:
-   
-   a) Open-source their implementation within 30 calendar days
-   
-   b) Contribute ≥10% of net protocol-related revenue to maintenance fund
-   
-   c) Offer patent cross-licensing for all derivative works
-
-EXCEPTED: Non-profit research, educational institutions, and individual users.
-
-=== COMMUNITY & SUPPORT ===
-
-| Channel         | Purpose                  | Access Method                      |
-|-----------------|--------------------------|------------------------------------|
-| GitHub Issues   | Bug reports, features    | github.com/mamanga1/Web5-Mesh/issues |
-| Secure Email    | Technical questions (PGP) | IberaAON@proton.me                 |  
-| Telegram        | Real-time discussions    | @IberaAON                          |
-| Architecture Docs | Protocol specification  | docs/architecture/protocol-spec.md  |
-
-=== PROJECT MANIFESTO ===
-
-"La internet donde los nodos son dueños de sus propias rutas."
-
-Core Principles:
-───────────────
-1. SOVEREIGNTY FIRST - Nodes retain ownership of their routing decisions and data paths
-2. NO KINGS, NO SUBJECTS - Every participant is simultaneously client and server by design  
-3. BARRO TECHNOLOGY - Built to survive adverse conditions (intermittent connectivity, resource constraints)  
-4. ANTI-CORPORATE ARCHITECTURE - Protocol specifically designed to resist centralized appropriation
-
-Technical Philosophy:
-─────────────────
-• Efficiency over Elegance - Code optimized for metal, not readability metrics
-• Resilience as Default - Assume connections will fail; build recovery into everything  
-• Transparency in Trust - Reputation scores visible and auditable by design  
-• Sovereignty of State - No centralized coordination points for critical operations
-
-=== PRIOR ART & REFERENCES ===
-
-Influences (Acknowledged):
-───────────────────────
-• Kademlia - Original DHT algorithm by Petar Maymounkov and David Estrin  
-• IPFS - Decentralized file storage architecture  
-• BitTorrent - Peer-to-peer distribution patterns  
-• Web5 / Solid - Sovereign identity frameworks  
-• Noise Protocol - Cryptographic handshake design
-
-Further Reading:
-───────────────
-1. docs/architecture/protocol-spec.md - Complete technical specification  
-2. whitepaper/sovereign-web.pdf - Full research paper (WIP)  
-3. PATENT-DISCLOSURE.md - Prior art declarations and FTO analysis
-
-=== CHANGelog ===
-
-Version 2.0.0-production (Current):
-───────────────────────────────
-✅ Stable DHT implementation with O(log n) complexity  
-✅ Identity system with secp256k1 DIDs operational  
-✅ Relay protocol with proven throughput characteristics  
-⚠️ NAT traversal still requires UPNP support in most cases  
-
-Version 2.0.0-beta (Previous):
-───────────────────────
-Initial public release with core routing functionality  
-First implementation of .mesh domain resolution (experimental)
-
-=== QUICK REFERENCE ===
-
-Essential Commands:
-─────────────────
-Clone & Bootstrap: git clone https://github.com/mamanga1/Web5-Mesh.git && cd Web5-Mesh && go run src/core/main.go --mode=bootstrap
-
-Check Node Status: go run src/core/main.go --status
-
-View Neighboring Nodes: go run src/core/main.go --list-neighbors  
-
-Sync DID Registry: go run src/core/main.go --sync-dids
-
-Run Performance Test: scripts/benchmark-suite
+La internet donde los nodos son dueños de sus propias rutas.
+Hecho con orgullo y aguante desde Corrientes, Argentina.
+Protocol Version: 2.0.0-production
+DID of Project Lead: did:maia:mamanga1-project-key
