@@ -48,6 +48,12 @@ func main() {
         // Parsear configuración
         cfg := config.DefaultConfig()
         cfg.ParseFlags()
+    // MODO PURO: desactivar relay y PoW
+    if cfg.Mode == "pure" {
+        cfg.Crypto.PoWDifficulty = 0
+        cfg.Network.NAT.RelayServer = ""
+        cfg.Network.NAT.AutoDiscover = false
+    }
 
         // Validar configuración
         if err := cfg.Validate(); err != nil {
