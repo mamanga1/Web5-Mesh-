@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"web5-mesh/src/config"
-	"web5-mesh/src/crypto"
-	"web5-mesh/src/dht"
-	"web5-mesh/src/reputation"
-	"web5-mesh/src/routing"
-	"web5-mesh/src/storage"
+	"github.com/mamanga1/web5-mesh/src/config"
+	"github.com/mamanga1/web5-mesh/src/crypto"
+	"github.com/mamanga1/web5-mesh/src/dht"
+	"github.com/mamanga1/web5-mesh/src/reputation"
+	"github.com/mamanga1/web5-mesh/src/routing"
+	"github.com/mamanga1/web5-mesh/src/storage"
 )
 
 // SovereignNode representa un nodo completo de la red MaIA Mesh
@@ -356,8 +356,8 @@ func (n *SovereignNode) GetReputation() *reputation.ReputationSystem {
 // Stats retorna estadísticas agregadas del nodo
 func (n *SovereignNode) Stats() map[string]interface{} {
 	stats := map[string]interface{}{
-		"did":       n.did,
-		"uptime":    time.Since(n.startTime).String(),
+		"did":        n.did,
+		"uptime":     time.Since(n.startTime).String(),
 		"is_running": n.isRunning,
 	}
 
