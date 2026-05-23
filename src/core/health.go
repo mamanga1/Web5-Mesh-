@@ -11,6 +11,7 @@
 package core
 
 import (
+	"github.com/mamanga1/web5-mesh/src/config"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -118,12 +119,12 @@ type ComponentHealth struct {
 // HealthServer maneja las solicitudes de health check
 type HealthServer struct {
 	node   *SovereignNode
-	config *NodeConfig
+	config *config.NodeConfig
 	mu     sync.RWMutex
 }
 
 // NewHealthServer crea un nuevo servidor de health check
-func NewHealthServer(node *SovereignNode, config *NodeConfig) *HealthServer {
+func NewHealthServer(node *SovereignNode, config *config.NodeConfig) *HealthServer {
 	return &HealthServer{
 		node:   node,
 		config: config,

@@ -10,6 +10,7 @@
 package core
 
 import (
+	"net/http"
 	"context"
 	"fmt"
 	"sync"
@@ -219,13 +220,13 @@ func (n *SovereignNode) Start() error {
 	n.isRunning = true
 
 	// Iniciar bootstrap en background
-	go n.bootstrap()
+	go n.Bootstrap()
 
 	return nil
 }
 
 // bootstrap conecta el nodo a la red
-func (n *SovereignNode) bootstrap() {
+func (n *SovereignNode) Bootstrap() {
 	ctx, cancel := context.WithTimeout(context.Background(), n.config.Bootstrap.BootstrapTimeout)
 	defer cancel()
 

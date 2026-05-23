@@ -14,7 +14,7 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"web5-mesh/src/crypto"
+	"github.com/mamanga1/web5-mesh/src/crypto"
 )
 
 // TestEncryptionDecryption prueba el cifrado y descifrado de datos

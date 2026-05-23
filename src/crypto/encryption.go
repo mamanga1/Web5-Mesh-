@@ -73,7 +73,7 @@ func EncryptPayload(plaintext []byte, sessionKey [32]byte) (*EncryptedMessage, e
 // Verifica automáticamente la autenticidad (Poly1305 tag)
 func DecryptPayload(encrypted *EncryptedMessage, sessionKey [32]byte) ([]byte, error) {
 	// Validar tamaño mínimo
-	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead() {
+	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 
@@ -116,7 +116,7 @@ func EncryptBytes(plaintext []byte, sessionKey [32]byte) ([]byte, error) {
 // DecryptBytes es la contraparte de EncryptBytes
 // Espera formato: [nonce (12 bytes)][ciphertext]
 func DecryptBytes(encrypted []byte, sessionKey [32]byte) ([]byte, error) {
-	if len(encrypted) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead() {
+	if len(encrypted) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 
@@ -169,7 +169,7 @@ func EncryptWithAdditionalData(plaintext, additionalData []byte, sessionKey [32]
 
 // DecryptWithAdditionalData descifra verificando datos adicionales
 func DecryptWithAdditionalData(encrypted *EncryptedMessage, additionalData []byte, sessionKey [32]byte) ([]byte, error) {
-	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead() {
+	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 

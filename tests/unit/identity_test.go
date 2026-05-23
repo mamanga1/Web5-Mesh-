@@ -13,7 +13,7 @@ import (
 	"bytes"
 	"testing"
 
-	"web5-mesh/src/crypto"
+	"github.com/mamanga1/web5-mesh/src/crypto"
 )
 
 // TestNewIdentity prueba la creación de una nueva identidad

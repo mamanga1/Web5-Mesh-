@@ -16,9 +16,9 @@ import (
 	"testing"
 	"time"
 
-	"web5-mesh/src/config"
-	"web5-mesh/src/core"
-	"web5-mesh/src/dht"
+	"github.com/mamanga1/web5-mesh/src/config"
+	"github.com/mamanga1/web5-mesh/src/core"
+	"github.com/mamanga1/web5-mesh/src/dht"
 )
 
 // TestFullMeshSimulation simula una red completa con múltiples nodos

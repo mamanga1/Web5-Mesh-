@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"web5-mesh/src/dht"
+	"github.com/mamanga1/web5-mesh/src/dht"
 )
 
 // TestDHTNodeCreation prueba la creación de nodos DHT
