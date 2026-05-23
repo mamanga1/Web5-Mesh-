@@ -13,18 +13,19 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime"
+	"runtime/debug"
 	"syscall"
 	"time"
 
-	"web5-mesh/src/config"
-	"web5-mesh/src/core"
+	"github.com/mamanga1/web5-mesh/src/config"
+	"github.com/mamanga1/web5-mesh/src/core"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
