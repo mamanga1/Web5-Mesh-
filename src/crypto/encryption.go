@@ -72,14 +72,13 @@ func EncryptPayload(plaintext []byte, sessionKey [32]byte) (*EncryptedMessage, e
 // DecryptPayload descifra un mensaje cifrado con ChaCha20-Poly1305
 // Verifica automáticamente la autenticidad (Poly1305 tag)
 func DecryptPayload(encrypted *EncryptedMessage, sessionKey [32]byte) ([]byte, error) {
-	// Validar tamaño mínimo
-	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead() {
+	// Validar tamaño mínimo - CORREGIDO: Overhead es constante, no función
+	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 
 	if len(encrypted.Nonce) != chacha20poly1305.NonceSize {
-		return nil, fmt.Errorf("invalid nonce size: expected %d, got %d",
-			chacha20poly1305.NonceSize, len(encrypted.Nonce))
+		return nil, fmt.Errorf("invalid nonce size: expected %d, got %d", chacha20poly1305.NonceSize, len(encrypted.Nonce))
 	}
 
 	// Crear cifrador
@@ -88,7 +87,7 @@ func DecryptPayload(encrypted *EncryptedMessage, sessionKey [32]byte) ([]byte, e
 		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
 
-	// Descifrar (Open verifica el tag automáticamente)
+	// Descifrar y verificar autenticidad
 	plaintext, err := aead.Open(nil, encrypted.Nonce, encrypted.Ciphertext, nil)
 	if err != nil {
 		return nil, ErrDecryptionFailed
@@ -97,18 +96,27 @@ func DecryptPayload(encrypted *EncryptedMessage, sessionKey [32]byte) ([]byte, e
 	return plaintext, nil
 }
 
-// EncryptBytes es una función de conveniencia que retorna los bytes concatenados
-// Formato: [nonce (12 bytes)][ciphertext]
+// EncryptBytes versión simplificada: retorna nonce|ciphertext concatenado
 func EncryptBytes(plaintext []byte, sessionKey [32]byte) ([]byte, error) {
-	msg, err := EncryptPayload(plaintext, sessionKey)
+	// Crear cifrador
+	aead, err := chacha20poly1305.New(sessionKey[:])
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
 
+	// Generar nonce
+	nonce := make([]byte, chacha20poly1305.NonceSize)
+	if _, err := rand.Read(nonce); err != nil {
+		return nil, fmt.Errorf("failed to generate nonce: %w", err)
+	}
+
+	// Cifrar
+	ciphertext := aead.Seal(nil, nonce, plaintext, nil)
+
 	// Concatenar nonce + ciphertext
-	result := make([]byte, 0, len(msg.Nonce)+len(msg.Ciphertext))
-	result = append(result, msg.Nonce...)
-	result = append(result, msg.Ciphertext...)
+	result := make([]byte, 0, len(nonce)+len(ciphertext))
+	result = append(result, nonce...)
+	result = append(result, ciphertext...)
 
 	return result, nil
 }
@@ -116,39 +124,29 @@ func EncryptBytes(plaintext []byte, sessionKey [32]byte) ([]byte, error) {
 // DecryptBytes es la contraparte de EncryptBytes
 // Espera formato: [nonce (12 bytes)][ciphertext]
 func DecryptBytes(encrypted []byte, sessionKey [32]byte) ([]byte, error) {
-	if len(encrypted) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead() {
+	// CORREGIDO: Overhead es constante
+	if len(encrypted) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 
 	nonce := encrypted[:chacha20poly1305.NonceSize]
 	ciphertext := encrypted[chacha20poly1305.NonceSize:]
 
-	return DecryptPayload(&EncryptedMessage{
-		Nonce:      nonce,
-		Ciphertext: ciphertext,
-	}, sessionKey)
-}
-
-// GenerateRandomKey genera una clave aleatoria de 32 bytes para sesiones
-func GenerateRandomKey() ([32]byte, error) {
-	var key [32]byte
-	_, err := rand.Read(key[:])
+	aead, err := chacha20poly1305.New(sessionKey[:])
 	if err != nil {
-		return key, fmt.Errorf("failed to generate random key: %w", err)
+		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
-	return key, nil
+
+	plaintext, err := aead.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, ErrDecryptionFailed
+	}
+
+	return plaintext, nil
 }
 
-// ZeroKey sobrescribe la clave con ceros (para limpieza segura)
-func ZeroKey(key *[32]byte) {
-	for i := range key {
-		key[i] = 0
-	}
-}
-
-// EncryptWithAdditionalData cifra con datos adicionales autenticados (AEAD)
-// Los datos adicionales no se cifran pero se incluyen en el tag MAC
-func EncryptWithAdditionalData(plaintext, additionalData []byte, sessionKey [32]byte) (*EncryptedMessage, error) {
+// EncryptWithAdditionalData cifra incluyendo datos adicionales (AD) que no se cifran pero se autentican
+func EncryptWithAdditionalData(plaintext []byte, additionalData []byte, sessionKey [32]byte) (*EncryptedMessage, error) {
 	aead, err := chacha20poly1305.New(sessionKey[:])
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cipher: %w", err)
@@ -169,7 +167,8 @@ func EncryptWithAdditionalData(plaintext, additionalData []byte, sessionKey [32]
 
 // DecryptWithAdditionalData descifra verificando datos adicionales
 func DecryptWithAdditionalData(encrypted *EncryptedMessage, additionalData []byte, sessionKey [32]byte) ([]byte, error) {
-	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead() {
+	// CORREGIDO: Overhead es constante
+	if len(encrypted.Ciphertext) < chacha20poly1305.Overhead {
 		return nil, ErrInvalidCiphertext
 	}
 
