@@ -7,10 +7,6 @@
 // - Deriva claves de sesión efímeras para forward secrecy
 // ============================================================================
 
-// ============================================================================
-// src/crypto/noise_layer.go - Noise Protocol Handshake (KK pattern)
-// ============================================================================
-
 package crypto
 
 import (
@@ -168,8 +164,9 @@ func (n *NoiseHandshakeState) encryptHandshakeMessage(plaintext []byte, key [32]
 	return result, nil
 }
 
+// CORREGIDO: Overhead es constante, no función
 func (n *NoiseHandshakeState) decryptHandshakeMessage(data []byte, key [32]byte) ([]byte, error) {
-	if len(data) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead() {
+	if len(data) < chacha20poly1305.NonceSize+chacha20poly1305.Overhead {
 		return nil, ErrInvalidMessage
 	}
 	nonce := data[:chacha20poly1305.NonceSize]
