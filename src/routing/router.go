@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"web5-mesh/src/crypto"
-	"web5-mesh/src/dht"
+	"github.com/mamanga1/web5-mesh/src/crypto"
+	"github.com/mamanga1/web5-mesh/src/dht"
 )
 
 type ConnectionState int
@@ -176,12 +176,11 @@ func (r *CryptoRouter) establishConnection(ctx context.Context, remoteDID, remot
 		var remoteStatic [32]byte
 		noiseState := crypto.NewNoiseHandshake(true, localStatic, remoteStatic)
 
-		msg, err := noiseState.WriteMessage()
+		_, err = noiseState.WriteMessage()
 		if err != nil {
 			errCh <- err
 			return
 		}
-		_ = msg // evitar warning de variable no usada
 
 		connection := &Connection{
 			ID:            fmt.Sprintf("%s->%s", r.identity.GetDIDString(), remoteDID),
