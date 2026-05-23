@@ -1,4 +1,4 @@
-sin los imports d// ============================================================================
+// ============================================================================
 // src/routing/nat_traversal.go - NAT Traversal & Hole Punching
 // ============================================================================
 
@@ -336,4 +336,4 @@ func (n *NATTraversalManager) EstablishDirectConnection(targetID, targetAddr str
 
 func (n *NATTraversalManager) StartLocalUPnP(port int) error {
 	return nil
-}e bytes y context
+}
