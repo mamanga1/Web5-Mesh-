@@ -33,66 +33,66 @@ const (
 // NodeHealth contiene toda la información de salud del nodo
 type NodeHealth struct {
 	// Estado general
-	Status      HealthStatus `json:"status"`
-	Uptime      string       `json:"uptime"`
-	UptimeSeconds int64      `json:"uptime_seconds"`
-	Version     string       `json:"version"`
-	StartTime   time.Time    `json:"start_time"`
-	Timestamp   time.Time    `json:"timestamp"`
+	Status        HealthStatus `json:"status"`
+	Uptime        string       `json:"uptime"`
+	UptimeSeconds int64        `json:"uptime_seconds"`
+	Version       string       `json:"version"`
+	StartTime     time.Time    `json:"start_time"`
+	Timestamp     time.Time    `json:"timestamp"`
 
 	// Información del nodo
-	NodeID      string `json:"node_id"`
-	NodeMode    string `json:"node_mode"`
-	Hardware    string `json:"hardware_profile"`
+	NodeID   string `json:"node_id"`
+	NodeMode string `json:"node_mode"`
+	Hardware string `json:"hardware_profile"`
 
 	// Red
-	Network     NetworkHealth   `json:"network"`
-	
+	Network NetworkHealth `json:"network"`
+
 	// Almacenamiento
-	Storage     StorageHealth   `json:"storage"`
-	
+	Storage StorageHealth `json:"storage"`
+
 	// Criptografía
-	Crypto      CryptoHealth    `json:"crypto"`
-	
+	Crypto CryptoHealth `json:"crypto"`
+
 	// Recursos del sistema
-	Resources   ResourceHealth  `json:"resources"`
-	
+	Resources ResourceHealth `json:"resources"`
+
 	// Componentes internos
-	Components  ComponentHealth `json:"components"`
+	Components ComponentHealth `json:"components"`
 }
 
 // NetworkHealth estado de la red
 type NetworkHealth struct {
-	DHTNodes        int     `json:"dht_nodes"`
-	ActivePeers     int     `json:"active_peers"`
-	PendingPeers    int     `json:"pending_peers"`
-	AvgLatencyMs    float64 `json:"avg_latency_ms"`
-	NATType         string  `json:"nat_type"`
-	RelayActive     bool    `json:"relay_active"`
-	Bootstrapped    bool    `json:"bootstrapped"`
-	UDPPort         int     `json:"udp_port"`
+	DHTNodes     int     `json:"dht_nodes"`
+	ActivePeers  int     `json:"active_peers"`
+	PendingPeers int     `json:"pending_peers"`
+	AvgLatencyMs float64 `json:"avg_latency_ms"`
+	NATType      string  `json:"nat_type"`
+	RelayActive  bool    `json:"relay_active"`
+	Bootstrapped bool    `json:"bootstrapped"`
+	UDPPort      int     `json:"udp_port"`
 }
 
 // StorageHealth estado del almacenamiento
 type StorageHealth struct {
-	TotalDocuments   int     `json:"total_documents"`
-	ActiveDocuments  int     `json:"active_documents"`
-	TotalChunks      int     `json:"total_chunks"`
-	StorageSizeMB    float64 `json:"storage_size_mb"`
-	ReplicationFactor int    `json:"replication_factor"`
-	CRDTSize         int     `json:"crdt_size"`
-	SyncPending      bool    `json:"sync_pending"`
-	LastSyncTime     string  `json:"last_sync_time"`
+	TotalDocuments    int     `json:"total_documents"`
+	ActiveDocuments   int     `json:"active_documents"`
+	TotalChunks       int     `json:"total_chunks"`
+	StorageSizeMB     float64 `json:"storage_size_mb"`
+	ReplicationFactor int     `json:"replication_factor"`
+	CRDTSize          int     `json:"crdt_size"`
+	SyncPending       bool    `json:"sync_pending"`
+	LastSyncTime      string  `json:"last_sync_time"`
 }
 
 // CryptoHealth estado criptográfico
 type CryptoHealth struct {
-	IdentityValid   bool   `json:"identity_valid"`
-	DID             string `json:"did"`
-	PoWDifficulty   int    `json:"pow_difficulty"`
-	SessionKeys     int    `json:"active_session_keys"`
-	LastHandshake   string `json:"last_handshake"`
-	NoiseEnabled    bool   `json:"noise_enabled"`
+	IdentityValid bool   `json:"identity_valid"`
+	DID           string `json:"did"`
+	PoWDifficulty int    `json:"pow_difficulty"`
+	SessionKeys   int    `json:"active_session_keys"`
+	LastHandshake string `json:"last_handshake"`
+	NoiseEnabled  bool   `json:"noise_enabled"`
 }
 
 // ResourceHealth recursos del sistema
@@ -133,10 +133,10 @@ func NewHealthServer(node *SovereignNode, config *NodeConfig) *HealthServer {
 // Handler es el handler HTTP para el endpoint /health
 func (h *HealthServer) Handler(w http.ResponseWriter, r *http.Request) {
 	health := h.CollectHealth()
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	
+
 	// Determinar código de estado HTTP
 	switch health.Status {
 	case HealthHealthy:
@@ -150,7 +150,7 @@ func (h *HealthServer) Handler(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusOK)
 	}
-	
+
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(health); err != nil {
@@ -161,11 +161,11 @@ func (h *HealthServer) Handler(w http.ResponseWriter, r *http.Request) {
 // CollectHealth recolecta toda la información de salud
 func (h *HealthServer) CollectHealth() *NodeHealth {
 	health := &NodeHealth{
-		Status:      HealthHealthy,
-		Timestamp:   time.Now(),
-		Version:     "2.0.0-production",
+		Status:    HealthHealthy,
+		Timestamp: time.Now(),
+		Version:   "2.0.0-production",
 	}
-	
+
 	// Información básica del nodo
 	if h.node != nil {
 		health.NodeID = h.node.GetDID()
@@ -173,48 +173,48 @@ func (h *HealthServer) CollectHealth() *NodeHealth {
 		health.UptimeSeconds = int64(time.Since(health.StartTime).Seconds())
 		health.Uptime = formatDuration(time.Since(health.StartTime))
 	}
-	
+
 	if h.config != nil {
 		health.NodeMode = string(h.config.Mode)
 		health.Hardware = string(h.config.Hardware)
 	}
-	
+
 	// Recolectar estado de cada subsistema
 	h.collectNetworkHealth(health)
 	h.collectStorageHealth(health)
 	h.collectCryptoHealth(health)
 	h.collectResourceHealth(health)
 	h.collectComponentHealth(health)
-	
+
 	// Determinar estado general
 	h.determineOverallStatus(health)
-	
+
 	return health
 }
 
 // collectNetworkHealth recolecta estado de la red
 func (h *HealthServer) collectNetworkHealth(health *NodeHealth) {
 	health.Network = NetworkHealth{
-		UDPPort:     4242,
+		UDPPort:      4242,
 		Bootstrapped: true,
 	}
-	
+
 	if h.node != nil && h.node.dhtEngine != nil {
 		totalNodes, _ := h.node.dhtEngine.TotalNodes()
 		health.Network.DHTNodes = totalNodes
 		health.Network.Bootstrapped = h.node.dhtEngine.IsBootstrapped()
 	}
-	
+
 	if h.node != nil && h.node.router != nil {
 		activeConns, _ := h.node.router.ActiveConnections()
 		health.Network.ActivePeers = len(activeConns)
 	}
-	
+
 	if h.config != nil {
 		health.Network.UDPPort = h.config.Network.UDPPort
 		health.Network.RelayActive = h.config.Network.NAT.RelayServer != ""
 	}
-	
+
 	// Determinar NAT type (simulado)
 	health.Network.NATType = "cone"
 }
@@ -225,7 +225,7 @@ func (h *HealthServer) collectStorageHealth(health *NodeHealth) {
 		ReplicationFactor: 3,
 		SyncPending:       false,
 	}
-	
+
 	if h.node != nil && h.node.storage != nil {
 		stats := h.node.storage.GetStats()
 		if totalDocs, ok := stats["files"].(int); ok {
@@ -235,7 +235,7 @@ func (h *HealthServer) collectStorageHealth(health *NodeHealth) {
 			health.Storage.TotalChunks = totalChunks
 		}
 	}
-	
+
 	if h.node != nil && h.node.crdtStore != nil {
 		crdtStats := h.node.crdtStore.Stats()
 		if total, ok := crdtStats["total_documents"].(int); ok {
@@ -245,11 +245,11 @@ func (h *HealthServer) collectStorageHealth(health *NodeHealth) {
 			health.Storage.ActiveDocuments = active
 		}
 	}
-	
+
 	if h.config != nil {
 		health.Storage.ReplicationFactor = h.config.Storage.ReplicationFactor
 	}
-	
+
 	health.Storage.LastSyncTime = time.Now().Add(-5 * time.Minute).Format(time.RFC3339)
 }
 
@@ -261,17 +261,17 @@ func (h *HealthServer) collectCryptoHealth(health *NodeHealth) {
 		NoiseEnabled:  true,
 		SessionKeys:   0,
 	}
-	
+
 	if h.node != nil && h.node.identity != nil {
 		health.Crypto.DID = h.node.identity.GetDIDString()
 		health.Crypto.IdentityValid = true
 	}
-	
+
 	if h.config != nil {
 		health.Crypto.PoWDifficulty = h.config.Crypto.PoWDifficulty
 		health.Crypto.NoiseEnabled = h.config.Crypto.EnableNoise
 	}
-	
+
 	health.Crypto.LastHandshake = time.Now().Add(-2 * time.Minute).Format(time.RFC3339)
 }
 
@@ -279,7 +279,7 @@ func (h *HealthServer) collectCryptoHealth(health *NodeHealth) {
 func (h *HealthServer) collectResourceHealth(health *NodeHealth) {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
-	
+
 	health.Resources = ResourceHealth{
 		Goroutines:    runtime.NumGoroutine(),
 		GCPercent:     int(memStats.GCCPUFraction * 100),
@@ -287,10 +287,10 @@ func (h *HealthServer) collectResourceHealth(health *NodeHealth) {
 		MemoryMB:      int64(memStats.Alloc / 1024 / 1024),
 		MemoryPercent: float64(memStats.Alloc) / float64(memStats.Sys) * 100,
 	}
-	
+
 	// Simular CPU usage
 	health.Resources.CPUUsagePercent = 5.0
-	
+
 	if h.config != nil && h.config.Performance.MemoryLimitMB > 0 {
 		health.Resources.MaxMemoryMB = int64(h.config.Performance.MemoryLimitMB)
 		health.Resources.MemoryPercent = float64(health.Resources.MemoryMB) / float64(health.Resources.MaxMemoryMB) * 100
@@ -304,11 +304,11 @@ func (h *HealthServer) collectComponentHealth(health *NodeHealth) {
 		CRDTStoreRunning:  h.node != nil && h.node.crdtStore != nil,
 		ReplicatedFSReady: h.node != nil && h.node.storage != nil,
 	}
-	
+
 	if h.node != nil && h.node.dhtEngine != nil {
 		health.Components.DHTActorRunning = true
 	}
-	
+
 	health.Components.MetricsServerReady = true
 }
 
@@ -319,28 +319,28 @@ func (h *HealthServer) determineOverallStatus(health *NodeHealth) {
 		health.Status = HealthCritical
 		return
 	}
-	
+
 	if health.Network.DHTNodes == 0 && health.Network.Bootstrapped {
 		health.Status = HealthDegraded
 		return
 	}
-	
+
 	// Verificar estado degradado
 	if health.Resources.MemoryPercent > 80 {
 		health.Status = HealthDegraded
 		return
 	}
-	
+
 	if health.Network.DHTNodes < 5 && health.Network.Bootstrapped {
 		health.Status = HealthDegraded
 		return
 	}
-	
+
 	if !health.Components.StorageRunning || !health.Components.CRDTStoreRunning {
 		health.Status = HealthDegraded
 		return
 	}
-	
+
 	// Si todo está bien
 	if health.Status == "" {
 		health.Status = HealthHealthy
@@ -353,7 +353,7 @@ func formatDuration(d time.Duration) string {
 	hours := int(d.Hours()) % 24
 	minutes := int(d.Minutes()) % 60
 	seconds := int(d.Seconds()) % 60
-	
+
 	if days > 0 {
 		return fmt.Sprintf("%dd %dh %dm %ds", days, hours, minutes, seconds)
 	}
@@ -376,7 +376,7 @@ func (h *HealthServer) LivenessCheck(w http.ResponseWriter, r *http.Request) {
 // ReadinessCheck verifica si el nodo está listo para recibir tráfico
 func (h *HealthServer) ReadinessCheck(w http.ResponseWriter, r *http.Request) {
 	health := h.CollectHealth()
-	
+
 	if health.Status == HealthHealthy || health.Status == HealthDegraded {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("READY"))
