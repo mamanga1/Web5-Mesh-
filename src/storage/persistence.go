@@ -71,7 +71,8 @@ func NewPersistenceStore(opts *StoreOptions) (*PersistenceStore, error) {
 	badgerOpts = badgerOpts.WithNumMemtables(opts.NumMemtables)
 
 	if !opts.Compression {
-		badgerOpts = badgerOpts.WithCompression(badger.None)
+		// CORREGIDO: badger.None -> badger.CompressionNone
+		badgerOpts = badgerOpts.WithCompression(badger.CompressionNone)
 	}
 
 	// Abrir base de datos
