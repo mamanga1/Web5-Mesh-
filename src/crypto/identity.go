@@ -60,18 +60,27 @@ func NewIdentity(name string) (*Identity, error) {
 	}, nil
 }
 
+// Sign firma un mensaje usando la clave privada secp256k1
+// CORREGIDO: usa secp256k1.SignCompact que retorna firma serializada
 func (id *Identity) Sign(data []byte) ([]byte, error) {
 	if id.PrivateKey == nil {
 		return nil, fmt.Errorf("no private key available")
 	}
 	hash := sha256.Sum256(data)
-	signature, err := id.PrivateKey.Sign(hash[:])
+	// Usar SignCompact que retorna firma serializada directamente
+	signature, err := secp256k1.SignCompact(id.PrivateKey, hash[:], false)
 	if err != nil {
 		return nil, fmt.Errorf("signing failed: %w", err)
 	}
-	return signature.Serialize(), nil
+	// Quitar el primer byte (tipo de recuperación) para firma pura
+	if len(signature) > 1 {
+		return signature[1:], nil
+	}
+	return signature, nil
 }
 
+// Verify verifica una firma secp256k1
+// CORREGIDO: parsea firma correctamente
 func (id *Identity) Verify(data []byte, signature []byte) bool {
 	if id.PublicKey == nil {
 		return false
@@ -80,12 +89,18 @@ func (id *Identity) Verify(data []byte, signature []byte) bool {
 		return false
 	}
 	hash := sha256.Sum256(data)
-	var sig secp256k1.Signature
-	if err := sig.ParseDERSignature(signature); err != nil {
-		var r, s [32]byte
-		copy(r[:], signature[:32])
-		copy(s[:], signature[32:64])
-		sig.SetRS(r, s)
+	// Parsear firma desde bytes
+	sig, err := secp256k1.ParseSignature(signature)
+	if err != nil {
+		// Intentar formato alternativo
+		if len(signature) >= 64 {
+			var r, s [32]byte
+			copy(r[:], signature[:32])
+			copy(s[:], signature[32:64])
+			sig = secp256k1.NewSignature(&r, &s)
+		} else {
+			return false
+		}
 	}
 	return sig.Verify(hash[:], id.PublicKey)
 }
