@@ -50,7 +50,7 @@ type SovereignNode struct {
 
         // Protección de concurrencia
         mu sync.RWMutex
-    peers       map[string]*PeerInfo
+    peers       map[string]time.Time
 }
 
 // NewSovereignNode crea una nueva instancia de SovereignNode
@@ -420,31 +420,46 @@ type PeerInfo struct {
 }
 
 // GetActivePeers retorna la cantidad de peers activos
+
+// addPeer agrega o actualiza un peer
+
+// GetActivePeers retorna la cantidad de peers activos (últimos 30 segundos)
+
+
+// GetActivePeers retorna la cantidad de peers activos (últimos 30 segundos)
+
+// addPeer agrega o actualiza un peer
+
+// GetActivePeers retorna la cantidad de peers activos (últimos 30 segundos)
 func (n *SovereignNode) GetActivePeers() int {
-        n.mu.RLock()
-        defer n.mu.RUnlock()
-        if n.peers == nil {
-                return 0
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    
+    if n.peers == nil {
+        return 0
+    }
+    
+    now := time.Now()
+    count := 0
+    for _, lastSeen := range n.peers {
+        if now.Sub(lastSeen) < 30*time.Second {
+            count++
         }
-        now := time.Now()
-        count := 0
-        for _, p := range n.peers {
-                if now.Sub(p.LastSeen) < 30*time.Second {
-                        count++
-                }
-        }
-        return count
+    }
+    return count
 }
 
 // addPeer agrega o actualiza un peer
 func (n *SovereignNode) addPeer(ip string) {
-        n.mu.Lock()
-        defer n.mu.Unlock()
-        if n.peers == nil {
-                n.peers = make(map[string]*PeerInfo)
-        }
-        if _, exists := n.peers[ip]; !exists {
-                log.Printf("[PEER] New peer discovered: %s", ip)
-        }
-        n.peers[ip] = &PeerInfo{Address: ip, LastSeen: time.Now()}
+    n.mu.Lock()
+    defer n.mu.Unlock()
+    
+    if n.peers == nil {
+        n.peers = make(map[string]time.Time)
+    }
+    
+    if _, exists := n.peers[ip]; !exists {
+        log.Printf("[PEER] New peer discovered: %s", ip)
+    }
+    n.peers[ip] = time.Now()
 }
