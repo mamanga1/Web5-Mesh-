@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"fmt"
 	"net"
-	"time"
 )
 
 type NodeID [20]byte
