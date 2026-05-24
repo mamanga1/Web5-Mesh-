@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// Crear transporte en puerto 4244
 	transport, err := p2p.NewTransportUDP(4244, 5*time.Second, 3*time.Second)
 	if err != nil {
 		log.Fatalf("Failed to create transport: %v", err)
@@ -18,7 +17,6 @@ func main() {
 
 	fmt.Printf("✅ Transport listening on %s\n", transport.LocalAddr().String())
 
-	// Goroutine para recibir mensajes
 	go func() {
 		for {
 			data, addr, err := transport.ReadFrom()
@@ -29,7 +27,6 @@ func main() {
 		}
 	}()
 
-	// Mantener vivo
 	fmt.Println("Waiting for messages... (Ctrl+C to stop)")
 	select {}
 }

@@ -6,16 +6,14 @@ import (
 	"time"
 )
 
-// TransportUDP maneja la comunicación UDP subyacente
 type TransportUDP struct {
-	conn     *net.UDPConn
-	port     int
+	conn         *net.UDPConn
+	port         int
 	readTimeout  time.Duration
 	writeTimeout time.Duration
 	localAddr    *net.UDPAddr
 }
 
-// NewTransportUDP crea un nuevo transporte UDP
 func NewTransportUDP(port int, readTimeout, writeTimeout time.Duration) (*TransportUDP, error) {
 	if readTimeout == 0 {
 		readTimeout = 10 * time.Second
@@ -39,12 +37,10 @@ func NewTransportUDP(port int, readTimeout, writeTimeout time.Duration) (*Transp
 	}, nil
 }
 
-// LocalAddr devuelve la dirección local
 func (t *TransportUDP) LocalAddr() *net.UDPAddr {
 	return t.localAddr
 }
 
-// ReadFrom lee un mensaje UDP
 func (t *TransportUDP) ReadFrom() ([]byte, *net.UDPAddr, error) {
 	buf := make([]byte, 65536)
 	t.conn.SetReadDeadline(time.Now().Add(t.readTimeout))
@@ -55,14 +51,12 @@ func (t *TransportUDP) ReadFrom() ([]byte, *net.UDPAddr, error) {
 	return buf[:n], addr, nil
 }
 
-// WriteTo envía un mensaje UDP a una dirección
 func (t *TransportUDP) WriteTo(data []byte, addr *net.UDPAddr) error {
 	t.conn.SetWriteDeadline(time.Now().Add(t.writeTimeout))
 	_, err := t.conn.WriteToUDP(data, addr)
 	return err
 }
 
-// Close cierra la conexión
 func (t *TransportUDP) Close() error {
 	return t.conn.Close()
 }
