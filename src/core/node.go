@@ -50,6 +50,7 @@ type SovereignNode struct {
 
         // Protección de concurrencia
         mu sync.RWMutex
+    peers       map[string]*PeerInfo
 }
 
 // NewSovereignNode crea una nueva instancia de SovereignNode
@@ -135,6 +136,7 @@ func (n *SovereignNode) udpReceiver() {
                         continue
                 }
                 log.Printf("[UDP] Received from %s (%d bytes)", udpAddr.IP.String(), nb)
+                n.addPeer(udpAddr.IP.String())
         }
 }
 
@@ -409,4 +411,40 @@ func (n *SovereignNode) StoreData(key, value []byte) error {
 // LookupData recupera datos del DHT
 func (n *SovereignNode) LookupData(key []byte) ([]byte, error) {
         return n.dhtEngine.LookupValue(context.Background(), key)
+}
+
+// PeerInfo almacena información de un peer descubierto
+type PeerInfo struct {
+        Address  string
+        LastSeen time.Time
+}
+
+// GetActivePeers retorna la cantidad de peers activos
+func (n *SovereignNode) GetActivePeers() int {
+        n.mu.RLock()
+        defer n.mu.RUnlock()
+        if n.peers == nil {
+                return 0
+        }
+        now := time.Now()
+        count := 0
+        for _, p := range n.peers {
+                if now.Sub(p.LastSeen) < 30*time.Second {
+                        count++
+                }
+        }
+        return count
+}
+
+// addPeer agrega o actualiza un peer
+func (n *SovereignNode) addPeer(ip string) {
+        n.mu.Lock()
+        defer n.mu.Unlock()
+        if n.peers == nil {
+                n.peers = make(map[string]*PeerInfo)
+        }
+        if _, exists := n.peers[ip]; !exists {
+                log.Printf("[PEER] New peer discovered: %s", ip)
+        }
+        n.peers[ip] = &PeerInfo{Address: ip, LastSeen: time.Now()}
 }
