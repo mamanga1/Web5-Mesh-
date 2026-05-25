@@ -149,5 +149,14 @@ Technical Blueprint: docs/architecture/protocol-spec.md
 
 La internet donde los nodos son dueños de sus propias rutas.
 Hecho con orgullo y aguante desde Corrientes, Argentina.
+
 Protocol Version: 2.0.0-production
 DID of Project Lead: did:maia:mamanga1-project-key
+
+
+## 💰 Contribuciones al Búnker
+
+Si querés apoyar el desarrollo, la infraestructura y los gastos del búnker (hosting, equipos de prueba, café ☕):
+**Binance ID:** `218085972` (Mamanga)
+Toda contribución ayuda a mantener la red soberana funcionando.
+¡Gracias por ser parte de la malla! 🧉🦾
