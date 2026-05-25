@@ -2,8 +2,9 @@ package p2p
 
 import (
 	"crypto/rand"
-	"fmt"
 	"net"
+	"sync"
+	"time"
 )
 
 type NodeID [20]byte
@@ -14,10 +15,17 @@ func GenerateNodeID() NodeID {
 	return id
 }
 
+type Contact struct {
+	ID       NodeID
+	Addr     *net.UDPAddr
+	LastSeen time.Time
+}
+
 type Kademlia struct {
 	localID   NodeID
 	transport *TransportUDP
 	running   bool
+	mu        sync.RWMutex
 }
 
 func NewKademlia(transport *TransportUDP) *Kademlia {
@@ -35,6 +43,7 @@ func (k *Kademlia) LocalID() NodeID {
 func (k *Kademlia) Start() error {
 	k.running = true
 	go k.handleMessages()
+	go k.telemetryLoop()
 	return nil
 }
 
@@ -43,6 +52,7 @@ func (k *Kademlia) Stop() {
 }
 
 func (k *Kademlia) Ping(addr *net.UDPAddr) error {
+	telemetry.IncPingSent()
 	return k.transport.WriteTo([]byte("PING"), addr)
 }
 
@@ -50,14 +60,27 @@ func (k *Kademlia) handleMessages() {
 	for k.running {
 		data, addr, err := k.transport.ReadFrom()
 		if err != nil {
-			fmt.Printf("[KAD] Read error: %v\n", err)
 			continue
 		}
-		fmt.Printf("[KAD] Received %d bytes from %s: %s\n", len(data), addr.String(), string(data))
+		msg := string(data)
 
-		if string(data) == "PING" {
-			fmt.Printf("[KAD] PING from %s, sending PONG\n", addr.String())
+		switch {
+		case msg == "PING":
+			telemetry.IncPingReceived()
 			k.transport.WriteTo([]byte("PONG"), addr)
+			telemetry.IncPongSent()
+		case msg == "PONG":
+			telemetry.IncPongReceived()
+		case msg == "FIND_NODE":
+			telemetry.IncFindNodeReceived()
+			k.transport.WriteTo([]byte("NODES"), addr)
 		}
+	}
+}
+
+func (k *Kademlia) telemetryLoop() {
+	for k.running {
+		time.Sleep(30 * time.Second)
+		telemetry.Log()
 	}
 }
