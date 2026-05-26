@@ -200,7 +200,8 @@ func (k *Kademlia) handleMessages() {
 			telemetry.IncFindNodeReceived()
 			k.transport.WriteTo([]byte("NODES"), addr)
 		case len(msg) > 6 && msg[:6] == "STORE:":
-			key := msg[6:]
+                        log.Printf("[KAD] ENTERED STORE CASE")			 
+                        key := msg[6:]
 			k.Store(key, []byte("stored"))
 		case len(msg) > 10 && msg[:10] == "FIND_VALUE:":
 			key := msg[10:]
