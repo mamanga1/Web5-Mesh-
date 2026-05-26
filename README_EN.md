@@ -174,3 +174,11 @@ Protocol Version: 2.0.0-production
 DID of Project Lead: `did:maia:mamanga1-project-key`
 
 </div>
+
+## 💰 Bunker Contributions
+
+If you want to support development, infrastructure, and bunker expenses (hosting, test equipment, coffee ☕):
+**Binance ID:** `218085972` (Mamanga)
+Every contribution helps keep the sovereign network running.
+
+Thanks for being part of the mesh! 🧉🦾
