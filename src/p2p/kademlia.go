@@ -80,6 +80,7 @@ type Kademlia struct {
 	buckets   []*Bucket
 	running   bool
 	mu        sync.RWMutex
+    dataStore map[string][]byte
 }
 
 func NewKademlia(transport *TransportUDP) *Kademlia {
