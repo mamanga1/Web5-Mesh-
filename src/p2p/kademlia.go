@@ -1,7 +1,6 @@
 package p2p
 
 import (
-	"log"
 	"crypto/rand"
 	"net"
 	"sync"
@@ -186,7 +185,7 @@ func (k *Kademlia) handleMessages() {
 		if err != nil {
 			continue
 		}
-		msg := string(data); log.Printf("[KAD] Received raw: %s", msg)
+		msg := string(data)
 
 		switch {
 		case msg == "PING":
@@ -197,9 +196,15 @@ func (k *Kademlia) handleMessages() {
 			telemetry.IncPongReceived()
 		case msg == "FIND_NODE":
 			telemetry.IncFindNodeReceived()
-			// Responder con los contactos más cercanos al remitente
-			// Por ahora responder con el propio ID
 			k.transport.WriteTo([]byte("NODES"), addr)
+		case len(msg) > 6 && msg[:6] == "STORE:":
+			key := msg[6:]
+			k.Store(key, []byte("stored"))
+		case len(msg) > 10 && msg[:10] == "FIND_VALUE:":
+			key := msg[10:]
+			if val, ok := k.FindValue(key); ok {
+				k.transport.WriteTo([]byte("VALUE:"+string(val)), addr)
+			}
 		}
 	}
 }
