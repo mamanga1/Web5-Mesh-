@@ -18,7 +18,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mamanga1/web5-mesh/src/dht"
 )
 
 // DomainRecord representa un registro de dominio en el DHT
