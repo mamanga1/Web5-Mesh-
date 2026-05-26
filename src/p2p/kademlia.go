@@ -1,6 +1,7 @@
 package p2p
 
 import (
+	// "log"
 	"crypto/rand"
 	"net"
 	"sync"
