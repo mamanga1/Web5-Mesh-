@@ -1,7 +1,7 @@
 package p2p
 
 import (
-	// "log"
+	"log"
 	"crypto/rand"
 	"net"
 	"sync"
@@ -187,6 +187,7 @@ func (k *Kademlia) handleMessages() {
 			continue
 		}
 		msg := string(data)
+                        log.Printf("[KAD] RAW: len=%d msg=%q", len(data), msg)
 
 		switch {
 		case msg == "PING":
