@@ -208,6 +208,8 @@ func (k *Kademlia) handleMessages() {
                         key := msg[11:]
 			if val, ok := k.FindValue(key); ok {
 				k.transport.WriteTo([]byte("VALUE:"+string(val)), addr)
+                                log.Printf("[KAD] SENT VALUE: %s to %s", string(val), addr.String())
+
 			}
 		}
 	}
