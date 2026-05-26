@@ -203,9 +203,9 @@ func (k *Kademlia) handleMessages() {
                         log.Printf("[KAD] ENTERED STORE CASE")			 
                         key := msg[6:]
 			k.Store(key, []byte("stored"))
-		case len(msg) > 10 && msg[:10] == "FIND_VALUE:":
-			log.Printf("[KAD] ENTERED FIND_VALUE CASE for key=%s", msg[10:])
-                        key := msg[10:]
+		case len(msg) > 11 && msg[:11] == "FIND_VALUE:":
+			log.Printf("[KAD] ENTERED FIND_VALUE CASE for key=%s", msg[11:])
+                        key := msg[11:]
 			if val, ok := k.FindValue(key); ok {
 				k.transport.WriteTo([]byte("VALUE:"+string(val)), addr)
 			}
