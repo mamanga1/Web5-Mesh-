@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"log"
 	"net"
+	"strings"
 	"sync"
 	"time"
 )
@@ -207,9 +208,15 @@ func (k *Kademlia) handleMessages() {
 		case msg == "FIND_NODE":
 			k.transport.WriteTo([]byte("NODES"), addr)
 		case len(msg) > 6 && msg[:6] == "STORE:":
-			key := msg[6:]
-			log.Printf("[KAD] STORE: key=%s", key)
-			k.Store(key, []byte("stored"))
+			parts := strings.SplitN(msg[6:], ":", 2)
+			if len(parts) == 2 {
+				key := parts[0]
+				value := parts[1]
+				log.Printf("[KAD] STORE: key=%s, value=%s", key, value)
+				k.Store(key, []byte(value))
+			} else {
+				log.Printf("[KAD] STORE: invalid format: %s", msg)
+			}
 		case len(msg) > 11 && msg[:11] == "FIND_VALUE:":
 			key := msg[11:]
 			log.Printf("[KAD] FIND_VALUE: looking for key=%s", key)
