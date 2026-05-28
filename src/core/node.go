@@ -181,7 +181,7 @@ func (n *SovereignNode) initP2P() {
                 return
         }
         n.p2pTransport = transport
-        n.kademlia = p2p.NewKademlia(transport, n.identity.PublicKey)
+        n.kademlia = p2p.NewKademlia(transport, n.identity)
         n.kademlia.Start()
         log.Printf("[P2P] Kademlia started with Node ID: %x", n.kademlia.LocalID())
 

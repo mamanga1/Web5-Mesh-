@@ -8,26 +8,34 @@ import (
         "strings"
         "sync"
         "time"
+
+        "github.com/mamanga1/web5-mesh/src/crypto"
 )
 
 type NodeID [20]byte
 
-// GenerateNodeID genera un NodeID con Proof of Work
-func GenerateNodeID(pubKey []byte) NodeID {
+// GenerateNodeIDFromPubKey genera un NodeID con PoW atado a una clave pública
+func GenerateNodeIDFromPubKey(pubKey []byte) NodeID {
         difficulty := DefaultPoWDifficulty
         maxAttempts := uint64(1000000)
         
         nonce, hash, found := FindNonce(pubKey, difficulty, maxAttempts)
         if !found {
-                // Fallback: usar hash simple sin PoW
                 hash = sha256.Sum256(pubKey)
-                log.Printf("[PoW] Fallback to simple hash (no PoW)")
+                log.Printf("[PoW] Fallback to simple hash (no PoW) for pubkey %x", pubKey[:8])
         } else {
-                log.Printf("[PoW] NodeID generated with nonce=%d, difficulty=%d", nonce, difficulty)
+                log.Printf("[PoW] NodeID generated with nonce=%d, difficulty=%d, pubkey=%x", nonce, difficulty, pubKey[:8])
         }
         
         var id NodeID
         copy(id[:], hash[:20])
+        return id
+}
+
+// GenerateNodeID genera un NodeID aleatorio (solo para pruebas, sin PoW)
+func GenerateNodeID() NodeID {
+        var id NodeID
+        rand.Read(id[:])
         return id
 }
 
@@ -93,19 +101,20 @@ type Kademlia struct {
         dataStore map[string][]byte
         running   bool
         mu        sync.RWMutex
+        identity  *crypto.Identity
 }
 
-func NewKademlia(transport *TransportUDP, pubKey []byte) *Kademlia {
-        // Generar clave pública temporal para PoW
-        tempKey := make([]byte, 32)
-        rand.Read(tempKey)
+func NewKademlia(transport *TransportUDP, identity *crypto.Identity) *Kademlia {
+        // Usar la clave pública del identity para PoW
+        pubKey := identity.PublicKey
         
         k := &Kademlia{
-                localID:   GenerateNodeID(tempKey),
+                localID:   GenerateNodeIDFromPubKey(pubKey),
                 transport: transport,
                 buckets:   make([]*Bucket, 160),
                 dataStore: make(map[string][]byte),
                 running:   true,
+                identity:  identity,
         }
         for i := 0; i < 160; i++ {
                 k.buckets[i] = NewBucket(20)
@@ -212,8 +221,8 @@ func (k *Kademlia) Ping(addr *net.UDPAddr) error {
 }
 
 func (k *Kademlia) handleMessages() {
-        // Crear handshake helper para responder
-        handshake := NewHandshake(k.transport, nil)
+        // Crear handshake helper para responder usando la identidad del nodo
+        handshake := NewHandshake(k.transport, k.identity)
         
         for k.running {
                 data, addr, err := k.transport.ReadFrom()
@@ -225,7 +234,6 @@ func (k *Kademlia) handleMessages() {
 
                 switch {
                 case len(data) > 4 && string(data[:4]) == "HELLO":
-                        // Responder al handshake
                         if handshake != nil {
                                 handshake.Respond(addr, data)
                         }
