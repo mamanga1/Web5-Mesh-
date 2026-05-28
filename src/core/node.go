@@ -3,6 +3,7 @@ package core
 import (
         "fmt"
         "log"
+        "net"
         "net/http"
         "sync"
         "time"
@@ -102,6 +103,14 @@ func (n *SovereignNode) initP2P() {
         n.kademlia = p2p.NewKademlia(transport)
         n.kademlia.Start()
         log.Printf("[P2P] Kademlia started with Node ID: %x", n.kademlia.LocalID())
+
+        // Iniciar handshake con el faro
+        handshake := p2p.NewHandshake(n.p2pTransport, n.identity)
+        seedAddr, err := net.ResolveUDPAddr("udp", "192.168.1.110:4245")
+        if err == nil {
+                go handshake.Initiate(seedAddr)
+                log.Printf("[P2P] Handshake initiated with faro")
+        }
 
         // BOOTSTRAP: conectar al faro (TV Box)
         seeds := []string{"192.168.1.110:4245"}
