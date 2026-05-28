@@ -4,7 +4,7 @@
 
 ![El Faro de la Red](https://i.postimg.cc/V6bPWYdC/faro.jpg)
 
-*"La TV Box X96Q que alumbra la primera red soberana. 4 núcleos, 1GB de RAM, una antenita USB. No hace falta una nube, hace falta una linterna."*
+*"La TV Box X96Q Allwinner 313 que alumbra la primera red soberana. 4 núcleos, 1GB de RAM. No hace falta una nube, hace falta una linterna."*
 
 El protocolo U2P y la infraestructura MaIA Mesh nacidos en el barro del NEA.
 
