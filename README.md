@@ -126,14 +126,16 @@ web5-mesh/
 └── LICENSE-TRINCHERA  # MIT + anti-corporate clause
 
 🛠️ Basic Commands (using netcat)
+
 bash
 # Store a value
 echo -n "STORE:myKey:myValue" | nc -u <NODE_IP> 4245
-
 # Retrieve a value
 echo -n "FIND_VALUE:myKey" | nc -u <NODE_IP> 4245
 # Response: VALUE:myValue
+
 🔜 Coming Soon (Next Sprint)
+
 Feature	Description
 SSH over U2P	ssh -o ProxyCommand="./web5-mesh proxy %h %p" did:maia:xeon
 Messaging DID to DID	Buzón distribuido sobre DHT, cifrado extremo a extremo
@@ -148,8 +150,9 @@ Es el "bouncer" que decide qué tráfico pasa	Pasa a ser un Súper Nodo Faro
 Cachea contenido, inspecciona, censura	Solo ve bytes cifrados - no puede inspeccionar
 Modelo: "proteger tu IP"	Modelo: acelerar tu tráfico P2P
 Puede bloquear dominios enteros	No sabe qué contenido está pasando
+
 Google: Fin del scraping promiscuo
-Hoy (Web2)	Mañana (U2P)
+           Hoy (Web2)	                             Mañana (U2P)
 Crawler scrapea tu web sin permiso	Necesita autenticarse con clave pública
 Consume tu ancho de banda gratis	Puedes cobrar por megabyte indexado
 Entrena sus IAs con tu contenido	Puedes exigir PoW costosa por acesso
@@ -162,37 +165,30 @@ Eclipse (aislar un nodo)	Kademlia con 160 buckets redundantes
 Suplantación de identidad	Firmas Ed25519 en cada mensaje
 
 ⚖️ License
+
 MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
-
 Corporations (>50 employees) using this protocol must:
-
 ✅ Open-source their implementation within 30 days
-
 ✅ Contribute ≥10% of net revenue to maintenance fund
-
 ✅ Offer patent cross-licensing
 
 📞 Community & Direct Support
+
 Issues & Code: github.com/mamanga1/Web5-Mesh/issues
-
 Secure Email: IberaAON@proton.me (PGP encrypted)
-
 Telegram: @IberaAON
 
 <div align="center">
 La internet donde los nodos son dueños de sus propias rutas.
-
 Hecho con orgullo y aguante desde Corrientes, Argentina.
-
 Protocol Version: 2.0.0-production
 DID of Project Lead: did:maia:mamanga1-project-key
-
 </div>
+
 💰 Contribuciones al Búnker
+
 Si querés apoyar el desarrollo, la infraestructura y los gastos del búnker (hosting, equipos de prueba, café ☕):
-
 Binance ID: 218085972 (Mamanga)
-
 Toda contribución ayuda a mantener la red soberana funcionando.
 
 ¡Gracias por ser parte de la malla! 🧉🦾
