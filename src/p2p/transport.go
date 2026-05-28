@@ -16,6 +16,7 @@ type TransportUDP struct {
         localAddr    *net.UDPAddr
         sessionKey   [32]byte
         sessionReady bool
+        isRelay      bool
 }
 
 func NewTransportUDP(port int, readTimeout, writeTimeout time.Duration) (*TransportUDP, error) {
@@ -39,6 +40,7 @@ func NewTransportUDP(port int, readTimeout, writeTimeout time.Duration) (*Transp
                 writeTimeout: writeTimeout,
                 localAddr:    conn.LocalAddr().(*net.UDPAddr),
                 sessionReady: false,
+                isRelay:      false,
         }, nil
 }
 
@@ -46,15 +48,21 @@ func (t *TransportUDP) LocalAddr() *net.UDPAddr {
         return t.localAddr
 }
 
-// SetSessionKey establece la clave para cifrado
 func (t *TransportUDP) SetSessionKey(key [32]byte) {
         t.sessionKey = key
         t.sessionReady = true
 }
 
-// IsSessionReady devuelve si la sesión está cifrada
 func (t *TransportUDP) IsSessionReady() bool {
         return t.sessionReady
+}
+
+func (t *TransportUDP) SetRelayMode(relay bool) {
+        t.isRelay = relay
+}
+
+func (t *TransportUDP) IsRelay() bool {
+        return t.isRelay
 }
 
 func (t *TransportUDP) ReadFrom() ([]byte, *net.UDPAddr, error) {
@@ -67,11 +75,13 @@ func (t *TransportUDP) ReadFrom() ([]byte, *net.UDPAddr, error) {
 
         data := buf[:n]
 
-        // Si la sesión está cifrada, intentar descifrar
+        if t.isRelay {
+                return data, addr, nil
+        }
+
         if t.sessionReady {
                 decrypted, err := crypto.DecryptBytes(data, t.sessionKey)
                 if err != nil {
-                        // Si falla el descifrado, devolver datos sin procesar
                         return data, addr, nil
                 }
                 return decrypted, addr, nil
@@ -85,7 +95,6 @@ func (t *TransportUDP) WriteTo(data []byte, addr *net.UDPAddr) error {
 
         var finalData []byte
 
-        // Si la sesión está cifrada, cifrar el mensaje
         if t.sessionReady {
                 encrypted, err := crypto.EncryptBytes(data, t.sessionKey)
                 if err != nil {
