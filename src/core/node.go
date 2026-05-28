@@ -93,7 +93,6 @@ func (n *SovereignNode) initStorage() error {
         return nil
 }
 
-
 func (n *SovereignNode) Start() error {
         n.mu.Lock()
         defer n.mu.Unlock()
@@ -174,6 +173,7 @@ func (n *SovereignNode) Stats() map[string]interface{} {
                 "uptime":     time.Since(n.startTime).String(),
         }
 }
+
 func (n *SovereignNode) initP2P() {
         transport, err := p2p.NewTransportUDP(n.config.Network.UDPPort, 10*time.Second, 5*time.Second)
         if err != nil {
@@ -199,8 +199,10 @@ func (n *SovereignNode) initP2P() {
                 log.Printf("[NAT] Failed to discover public IP: %v", err)
         } else {
                 log.Printf("[NAT] Public IP: %s:%d", nat.PublicIP.String(), nat.PublicPort)
+                
                 // Registrar en el faro
                 holepuncher := p2p.NewHolePuncher(n.p2pTransport, "192.168.1.110:4245")
+                holepuncher.SetNodeInfo(n.did, nat.PublicIP.String(), nat.PublicPort)
                 holepuncher.RegisterPublicIP(nat.PublicIP.String(), nat.PublicPort)
         }
 
