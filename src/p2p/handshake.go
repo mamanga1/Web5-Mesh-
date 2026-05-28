@@ -64,6 +64,13 @@ func (h *Handshake) Respond(addr *net.UDPAddr, data []byte) error {
         copy(ephemeralKey[:], data[len(data)-32:])
         sharedKey := blake2b.Sum256(ephemeralKey[:])
         h.transport.SetSessionKey(sharedKey)
+        
+        // Enviar respuesta HELLO para confirmar
+        pubKey := h.identity.PublicKey
+        respMsg := append([]byte("HELLO"), pubKey...)
+        respMsg = append(respMsg, ephemeralKey[:]...)
+        h.transport.WriteTo(respMsg, addr)
+        
         log.Printf("[HANDSHAKE] Session encrypted with %s", addr.String())
     }
     
