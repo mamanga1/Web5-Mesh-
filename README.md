@@ -71,6 +71,7 @@ text
 [PoW] NodeID generated with nonce=17, difficulty=4
 [P2P] Kademlia started with Node ID: 0dc0d0f999140c8b...
 [NODE] Started successfully, DID: did:maia:FyMbwkrxGDnKHumx...
+
 🛠️ Compilación Multiplataforma
 bash
 # Linux AMD64 (Xeon, servidores)
@@ -87,7 +88,9 @@ GOOS=darwin GOARCH=amd64 go build -tags=netgo -o web5-mesh-macos .
 
 # Android (Termux)
 GOOS=android GOARCH=arm64 go build -tags=netgo -o web5-mesh-android .
+
 📊 Performance Metrics
+
 DHT Operation	Local (<10ms RTT)	Regional (>50ms RTT)
 Node Discovery	8.2 ms ± 0.3	47.6 ms ± 2.1
 DID Lookup	12.1 ms ± 0.5	89.3 ms ± 4.2
@@ -96,7 +99,9 @@ Reliability Metric	Value	Period
 Network Uptime	99.87%	Last 30 days
 Data Consistency	99.94%	CRDT validation
 DHT Availability	99.99%	No SPOF
+
 🔐 Security & Cryptography
+
 Layer	Implementation	Status
 Identity	Ed25519 DIDs (did:maia:Base58)	✅
 Anti-Sybil	Proof-of-Work (4-bit Hashcash)	✅
@@ -119,6 +124,7 @@ web5-mesh/
 ├── cmd/               # CLI tools
 ├── tests/             # Integration tests
 └── LICENSE-TRINCHERA  # MIT + anti-corporate clause
+
 🛠️ Basic Commands (using netcat)
 bash
 # Store a value
@@ -133,7 +139,9 @@ SSH over U2P	ssh -o ProxyCommand="./web5-mesh proxy %h %p" did:maia:xeon
 Messaging DID to DID	Buzón distribuido sobre DHT, cifrado extremo a extremo
 .mesh Hosting	Publicar sitios web estáticos en la DHT
 Token PIRE	Transferencia de valor nativa en la red
+
 💥 El Golpe Maestro a la Industria de Seguridad
+
 Cloudflare: De dictador del tráfico a lubricante de infraestructura
 Hoy (Web2)	Mañana (U2P)
 Es el "bouncer" que decide qué tráfico pasa	Pasa a ser un Súper Nodo Faro
@@ -152,6 +160,7 @@ Generar millones de NodeIDs falsos	PoW atado a DID real - costo acumulado
 Inundar la DHT de basura	Buckets limitados (20 contactos) + LRU
 Eclipse (aislar un nodo)	Kademlia con 160 buckets redundantes
 Suplantación de identidad	Firmas Ed25519 en cada mensaje
+
 ⚖️ License
 MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
 
