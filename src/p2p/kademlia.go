@@ -95,7 +95,7 @@ type Kademlia struct {
         mu        sync.RWMutex
 }
 
-func NewKademlia(transport *TransportUDP) *Kademlia {
+func NewKademlia(transport *TransportUDP, pubKey []byte) *Kademlia {
         // Generar clave pública temporal para PoW
         tempKey := make([]byte, 32)
         rand.Read(tempKey)
