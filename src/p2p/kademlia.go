@@ -2,6 +2,7 @@ package p2p
 
 import (
         "crypto/rand"
+        "crypto/sha256"
         "log"
         "net"
         "strings"
@@ -11,9 +12,22 @@ import (
 
 type NodeID [20]byte
 
-func GenerateNodeID() NodeID {
+// GenerateNodeID genera un NodeID con Proof of Work
+func GenerateNodeID(pubKey []byte) NodeID {
+        difficulty := DefaultPoWDifficulty
+        maxAttempts := uint64(1000000)
+        
+        nonce, hash, found := FindNonce(pubKey, difficulty, maxAttempts)
+        if !found {
+                // Fallback: usar hash simple sin PoW
+                hash = sha256.Sum256(pubKey)
+                log.Printf("[PoW] Fallback to simple hash (no PoW)")
+        } else {
+                log.Printf("[PoW] NodeID generated with nonce=%d, difficulty=%d", nonce, difficulty)
+        }
+        
         var id NodeID
-        rand.Read(id[:])
+        copy(id[:], hash[:20])
         return id
 }
 
@@ -82,8 +96,12 @@ type Kademlia struct {
 }
 
 func NewKademlia(transport *TransportUDP) *Kademlia {
+        // Generar clave pública temporal para PoW
+        tempKey := make([]byte, 32)
+        rand.Read(tempKey)
+        
         k := &Kademlia{
-                localID:   GenerateNodeID(),
+                localID:   GenerateNodeID(tempKey),
                 transport: transport,
                 buckets:   make([]*Bucket, 160),
                 dataStore: make(map[string][]byte),
@@ -92,6 +110,7 @@ func NewKademlia(transport *TransportUDP) *Kademlia {
         for i := 0; i < 160; i++ {
                 k.buckets[i] = NewBucket(20)
         }
+        log.Printf("[KAD] NodeID generated with PoW: %x", k.localID[:8])
         return k
 }
 
