@@ -12,22 +12,25 @@ import (
 type Handshake struct {
     transport *TransportUDP
     identity  *crypto.Identity
+    acl       *ACL
 }
 
 func NewHandshake(transport *TransportUDP, identity *crypto.Identity) *Handshake {
+    acl := NewACL()
+    if identity != nil {
+        acl.AddAuthorizedKey(identity.PublicKey)
+    }
     return &Handshake{
         transport: transport,
         identity:  identity,
+        acl:       acl,
     }
 }
 
-// Initiate inicia handshake como emisor
 func (h *Handshake) Initiate(addr *net.UDPAddr) error {
-    // Generar clave efímera
     var ephemeralKey [32]byte
     rand.Read(ephemeralKey[:])
     
-    // Enviar HELLO con clave pública
     pubKey := h.identity.PublicKey
     helloMsg := append([]byte("HELLO"), pubKey...)
     helloMsg = append(helloMsg, ephemeralKey[:]...)
@@ -36,14 +39,12 @@ func (h *Handshake) Initiate(addr *net.UDPAddr) error {
         return err
     }
     
-    // Esperar respuesta
     resp, _, err := h.transport.ReadFrom()
     if err != nil {
         return err
     }
     
     if len(resp) > 4 && string(resp[:4]) == "HELLO" {
-        // Derivar clave compartida
         sharedKey := blake2b.Sum256(ephemeralKey[:])
         h.transport.SetSessionKey(sharedKey)
         log.Printf("[HANDSHAKE] Session encrypted with %s", addr.String())
@@ -52,27 +53,33 @@ func (h *Handshake) Initiate(addr *net.UDPAddr) error {
     return nil
 }
 
-// Respond responde a handshake como receptor
 func (h *Handshake) Respond(addr *net.UDPAddr, data []byte) error {
     if len(data) < 4 || string(data[:4]) != "HELLO" {
         return nil
     }
     
-    // Extraer clave efímera del mensaje
     if len(data) > 36 {
+        remotePub := data[4:36]
+        if !h.acl.CheckHandshake(remotePub) {
+            log.Printf("[HANDSHAKE] Rejected unauthorized peer from %s", addr.String())
+            return nil
+        }
+        
         var ephemeralKey [32]byte
         copy(ephemeralKey[:], data[len(data)-32:])
         sharedKey := blake2b.Sum256(ephemeralKey[:])
         h.transport.SetSessionKey(sharedKey)
         
-        // Enviar respuesta HELLO para confirmar
-        pubKey := h.identity.PublicKey
-        respMsg := append([]byte("HELLO"), pubKey...)
+        respMsg := append([]byte("HELLO"), h.identity.PublicKey...)
         respMsg = append(respMsg, ephemeralKey[:]...)
         h.transport.WriteTo(respMsg, addr)
         
-        log.Printf("[HANDSHAKE] Session encrypted with %s", addr.String())
+        log.Printf("[HANDSHAKE] Session encrypted with authorized peer %s", addr.String())
     }
     
     return nil
+}
+
+func (h *Handshake) AddAuthorizedKey(pubKey []byte) {
+    h.acl.AddAuthorizedKey(pubKey)
 }
