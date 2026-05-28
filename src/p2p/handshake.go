@@ -6,6 +6,7 @@ import (
     "net"
     
     "github.com/mamanga1/web5-mesh/src/crypto"
+    "golang.org/x/crypto/blake2b"
 )
 
 type Handshake struct {
@@ -20,13 +21,14 @@ func NewHandshake(transport *TransportUDP, identity *crypto.Identity) *Handshake
     }
 }
 
+// Initiate inicia handshake como emisor
 func (h *Handshake) Initiate(addr *net.UDPAddr) error {
+    // Generar clave efímera
     var ephemeralKey [32]byte
     rand.Read(ephemeralKey[:])
     
-    // Usar la clave pública directamente (Ed25519 son 32 bytes)
+    // Enviar HELLO con clave pública
     pubKey := h.identity.PublicKey
-    
     helloMsg := append([]byte("HELLO"), pubKey...)
     helloMsg = append(helloMsg, ephemeralKey[:]...)
     
@@ -34,23 +36,36 @@ func (h *Handshake) Initiate(addr *net.UDPAddr) error {
         return err
     }
     
+    // Esperar respuesta
     resp, _, err := h.transport.ReadFrom()
     if err != nil {
         return err
     }
     
     if len(resp) > 4 && string(resp[:4]) == "HELLO" {
-        log.Printf("[HANDSHAKE] Completed with %s", addr.String())
+        // Derivar clave compartida
+        sharedKey := blake2b.Sum256(ephemeralKey[:])
+        h.transport.SetSessionKey(sharedKey)
+        log.Printf("[HANDSHAKE] Session encrypted with %s", addr.String())
     }
     
     return nil
 }
 
+// Respond responde a handshake como receptor
 func (h *Handshake) Respond(addr *net.UDPAddr, data []byte) error {
     if len(data) < 4 || string(data[:4]) != "HELLO" {
         return nil
     }
     
-    log.Printf("[HANDSHAKE] Received handshake from %s", addr.String())
+    // Extraer clave efímera del mensaje
+    if len(data) > 36 {
+        var ephemeralKey [32]byte
+        copy(ephemeralKey[:], data[len(data)-32:])
+        sharedKey := blake2b.Sum256(ephemeralKey[:])
+        h.transport.SetSessionKey(sharedKey)
+        log.Printf("[HANDSHAKE] Session encrypted with %s", addr.String())
+    }
+    
     return nil
 }
