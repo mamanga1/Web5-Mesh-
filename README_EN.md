@@ -1,3 +1,5 @@
+![PIRA PIRE Logo](https://i.postimg.cc/T2DwZV4f/1779972490.png)
+
 # web5-mesh / iAP2P - MaIA Mesh
 
 🛰️ **IBERÁ AON (Autonomous Overlay Network)**
