@@ -3,15 +3,14 @@ package p2p
 import (
     "log"
     "net"
-    "time"
     
     "github.com/pion/stun"
 )
 
 type NATTraversal struct {
     transport   *TransportUDP
-    publicIP    net.IP
-    publicPort  int
+    PublicIP    net.IP
+    PublicPort  int
     stunServer  string
 }
 
@@ -23,39 +22,36 @@ func NewNATTraversal(transport *TransportUDP, stunServer string) *NATTraversal {
 }
 
 func (n *NATTraversal) DiscoverPublicIP() error {
-    c, err := stun.Dial("udp", n.stunServer)
+    conn, err := net.Dial("udp", n.stunServer)
     if err != nil {
         return err
     }
-    defer c.Close()
-    
+    defer conn.Close()
+
     message := stun.MustBuild(stun.TransactionID, stun.BindingRequest)
-    if err := c.Do(message, func(res stun.Event) {
-        if res.Error != nil {
-            return
-        }
-        var xorAddr stun.XORMappedAddress
-        if err := xorAddr.GetFrom(res.Message); err != nil {
-            return
-        }
-        n.publicIP = xorAddr.IP
-        n.publicPort = xorAddr.Port
-    }); err != nil {
+    if _, err := conn.Write(message.Raw); err != nil {
         return err
     }
-    
-    log.Printf("[NAT] Public IP: %s:%d", n.publicIP.String(), n.publicPort)
-    return nil
-}
 
-func (n *NATTraversal) HolePunch(targetIP string, targetPort int) error {
-    addr := &net.UDPAddr{IP: net.ParseIP(targetIP), Port: targetPort}
-    
-    for i := 0; i < 5; i++ {
-        n.transport.WriteTo([]byte("SYN"), addr)
-        time.Sleep(50 * time.Millisecond)
+    buf := make([]byte, 1024)
+    byteCount, err := conn.Read(buf)
+    if err != nil {
+        return err
     }
-    
-    log.Printf("[NAT] Hole punch attempted to %s:%d", targetIP, targetPort)
+
+    res := &stun.Message{Raw: buf[:byteCount]}
+    if err := res.Decode(); err != nil {
+        return err
+    }
+
+    var xorAddr stun.XORMappedAddress
+    if err := xorAddr.GetFrom(res); err != nil {
+        return err
+    }
+
+    n.PublicIP = xorAddr.IP
+    n.PublicPort = xorAddr.Port
+
+    log.Printf("[NAT] Public IP: %s:%d", n.PublicIP.String(), n.PublicPort)
     return nil
 }

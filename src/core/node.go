@@ -93,31 +93,6 @@ func (n *SovereignNode) initStorage() error {
         return nil
 }
 
-func (n *SovereignNode) initP2P() {
-        transport, err := p2p.NewTransportUDP(n.config.Network.UDPPort, 10*time.Second, 5*time.Second)
-        if err != nil {
-                log.Printf("[P2P] Failed to create transport: %v", err)
-                return
-        }
-        n.p2pTransport = transport
-        n.kademlia = p2p.NewKademlia(transport)
-        n.kademlia.Start()
-        log.Printf("[P2P] Kademlia started with Node ID: %x", n.kademlia.LocalID())
-
-        // Iniciar handshake con el faro
-        handshake := p2p.NewHandshake(n.p2pTransport, n.identity)
-        seedAddr, err := net.ResolveUDPAddr("udp", "192.168.1.110:4245")
-        if err == nil {
-                go handshake.Initiate(seedAddr)
-                log.Printf("[P2P] Handshake initiated with faro")
-        }
-
-        // BOOTSTRAP: conectar al faro (TV Box)
-        seeds := []string{"192.168.1.110:4245"}
-        bootstrapper := p2p.NewBootstrapper(n.p2pTransport, n.kademlia, seeds)
-        bootstrapper.Start()
-        go bootstrapper.BootstrapLoop(5 * time.Minute)
-}
 
 func (n *SovereignNode) Start() error {
         n.mu.Lock()
@@ -198,4 +173,40 @@ func (n *SovereignNode) Stats() map[string]interface{} {
                 "is_running": n.isRunning,
                 "uptime":     time.Since(n.startTime).String(),
         }
+}
+func (n *SovereignNode) initP2P() {
+        transport, err := p2p.NewTransportUDP(n.config.Network.UDPPort, 10*time.Second, 5*time.Second)
+        if err != nil {
+                log.Printf("[P2P] Failed to create transport: %v", err)
+                return
+        }
+        n.p2pTransport = transport
+        n.kademlia = p2p.NewKademlia(transport)
+        n.kademlia.Start()
+        log.Printf("[P2P] Kademlia started with Node ID: %x", n.kademlia.LocalID())
+
+        // Iniciar handshake con el faro
+        handshake := p2p.NewHandshake(n.p2pTransport, n.identity)
+        seedAddr, err := net.ResolveUDPAddr("udp", "192.168.1.110:4245")
+        if err == nil {
+                go handshake.Initiate(seedAddr)
+                log.Printf("[P2P] Handshake initiated with faro")
+        }
+
+        // Descubrir IP pública con STUN
+        nat := p2p.NewNATTraversal(n.p2pTransport, "stun.l.google.com:19302")
+        if err := nat.DiscoverPublicIP(); err != nil {
+                log.Printf("[NAT] Failed to discover public IP: %v", err)
+        } else {
+                log.Printf("[NAT] Public IP: %s:%d", nat.PublicIP.String(), nat.PublicPort)
+                // Registrar en el faro
+                holepuncher := p2p.NewHolePuncher(n.p2pTransport, "192.168.1.110:4245")
+                holepuncher.RegisterPublicIP(nat.PublicIP.String(), nat.PublicPort)
+        }
+
+        // BOOTSTRAP: conectar al faro (TV Box)
+        seeds := []string{"192.168.1.110:4245"}
+        bootstrapper := p2p.NewBootstrapper(n.p2pTransport, n.kademlia, seeds)
+        bootstrapper.Start()
+        go bootstrapper.BootstrapLoop(5 * time.Minute)
 }
