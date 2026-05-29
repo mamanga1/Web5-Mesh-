@@ -8,6 +8,8 @@ import (
         "github.com/mamanga1/web5-mesh/src/crypto"
 )
 
+var powManager = NewPoWManager()
+
 type TransportUDP struct {
         conn         *net.UDPConn
         port         int
@@ -75,10 +77,33 @@ func (t *TransportUDP) ReadFrom() ([]byte, *net.UDPAddr, error) {
 
         data := buf[:n]
 
+        // Si es relay, no descifra (solo reenvía)
         if t.isRelay {
                 return data, addr, nil
         }
 
+        // Verificar PoW si es necesario (para nodos sin sesión)
+        if !t.sessionReady {
+                difficulty := powManager.GetDifficulty(addr.IP.String(), 1)
+                if difficulty > 0 {
+                        // Esperamos que el primer paquete tenga el nonce PoW
+                        if len(data) < 8 {
+                                return nil, nil, fmt.Errorf("PoW required: send nonce")
+                        }
+                        // Los primeros 8 bytes son el nonce
+                        nonce := uint64(0)
+                        for i := 0; i < 8; i++ {
+                                nonce = (nonce << 8) | uint64(data[i])
+                        }
+                        if !VerifyPoW(data[8:], nonce, difficulty) {
+                                return nil, nil, fmt.Errorf("PoW verification failed")
+                        }
+                        // Si pasa, devolver el payload sin el nonce
+                        return data[8:], addr, nil
+                }
+        }
+
+        // Si la sesión está cifrada, intentar descifrar
         if t.sessionReady {
                 decrypted, err := crypto.DecryptBytes(data, t.sessionKey)
                 if err != nil {
